@@ -21,7 +21,7 @@ const BlogPage = ({
   },
 }) => (
   <Layout>
-    <SEO title="Page two" />
+    <SEO title="blog" />
     <h1>博客列表页</h1>
     <Content>
         {posts.map(post => (
@@ -36,7 +36,6 @@ const BlogPage = ({
           />
         ))}
       </Content>
-    <Link to="/">Go back to the homepage</Link>
   </Layout>
 );
 
