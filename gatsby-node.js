@@ -5,7 +5,7 @@
  */
 
 // You can delete this file if you're not using it
-const _ = require('lodash')
+const _ = require('lodash');
 
 const wrapper = promise =>
   promise.then(result => {

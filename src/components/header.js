@@ -35,11 +35,11 @@ const NavigatorContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   flex: 1 1;
-`
+`;
 
 const NaviGatorItem = styled(Link)`
-  
-`
+  margin-left: 16px;
+`;
 
 const Header = ({ siteTitle }) => {
   const { site } = useStaticQuery(
@@ -62,7 +62,7 @@ const Header = ({ siteTitle }) => {
           style={{
             color: `#FFF`,
             textDecoration: `none`,
-            flex: `0 0 320px`
+            flex: `0 0 320px`,
           }}
         >
           <Logo src={logoImg} />

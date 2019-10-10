@@ -54,12 +54,12 @@ module.exports = {
       },
     },
     {
-        resolve: 'gatsby-source-filesystem',
-        options: {
-          name: 'posts',
-          path: `${__dirname}/src/posts`,
-        },
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        name: 'posts',
+        path: `${__dirname}/src/posts`,
       },
+    },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     {
@@ -78,4 +78,4 @@ module.exports = {
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
   ],
-}
+};

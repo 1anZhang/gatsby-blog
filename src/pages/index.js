@@ -6,9 +6,9 @@ import Image from '../components/Image';
 import SEO from '../components/Seo';
 
 const ImageWrapper = styled.div`
-    max-width: 300px;
-    margin-bottom: 24px;
-`
+  max-width: 300px;
+  margin-bottom: 24px;
+`;
 
 const IndexPage = () => (
   <Layout>

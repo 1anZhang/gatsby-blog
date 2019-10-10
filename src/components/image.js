@@ -1,6 +1,6 @@
-import React from "react"
-import { useStaticQuery, graphql } from "gatsby"
-import Img from "gatsby-image"
+import React from 'react';
+import { useStaticQuery, graphql } from 'gatsby';
+import Img from 'gatsby-image';
 
 /*
  * This component is built using `gatsby-image` to automatically serve optimized
@@ -13,34 +13,36 @@ import Img from "gatsby-image"
  * - `useStaticQuery`: https://www.gatsbyjs.org/docs/use-static-query/
  */
 
-const Image = ({uri}) => {
+const Image = ({ uri }) => {
   const data = useStaticQuery(graphql`
     query {
-        allImageSharp {
-          nodes {
-            fluid {
-              base64
-              tracedSVG
-              aspectRatio
-              src
-              srcSet
-              srcWebp
-              srcSetWebp
-              sizes
-              originalImg
-              originalName
-              presentationWidth
-              presentationHeight
-            }
+      allImageSharp {
+        nodes {
+          fluid {
+            base64
+            tracedSVG
+            aspectRatio
+            src
+            srcSet
+            srcWebp
+            srcSetWebp
+            sizes
+            originalImg
+            originalName
+            presentationWidth
+            presentationHeight
           }
         }
       }
-  `)
-  const filterNodes = data.allImageSharp.nodes.filter(n => n.fluid.originalName === uri);
+    }
+  `);
+  const filterNodes = data.allImageSharp.nodes.filter(
+    n => n.fluid.originalName === uri
+  );
   if (filterNodes.length === 0) {
     throw new Error('请检查传入的图片名是否正确！');
   }
-  return <Img fluid={filterNodes[0].fluid} />
-}
+  return <Img fluid={filterNodes[0].fluid} />;
+};
 
-export default Image
+export default Image;
