@@ -1,6 +1,6 @@
 import { Link, graphql, useStaticQuery } from 'gatsby';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffects } from 'react';
 import styled from 'styled-components';
 
 import logoImg from '../images/duck.svg';
@@ -10,11 +10,20 @@ const HeaderContainer = styled.header`
   margin-bottom: 24px;
 `;
 
-const MainContianer = styled.div`
+const Content = styled.div`
   display: flex;
+  align-items: center;
   margin: 0 auto;
   max-width: 960px;
-  padding: 24px 36px;
+  padding: 12px 36px;
+`;
+
+const LinkHome = styled(Link)`
+  display: flex;
+  align-items: center;
+  color: #fff;
+  text-decoration: none;
+  flex: 0 0 320px;
 `;
 
 const Logo = styled.img`
@@ -25,9 +34,9 @@ const Logo = styled.img`
 `;
 
 const Title = styled.h1`
-  margin-left: 32px;
+  margin: 0 0 0 32px;
   display: inline;
-  font-size: 32px;
+  font-size: 24px;
   font-family: 'PingFang-SC';
 `;
 
@@ -56,25 +65,18 @@ const Header = ({ siteTitle }) => {
 
   return (
     <HeaderContainer backgroundColor={site.siteMetadata.theme_color}>
-      <MainContianer>
-        <Link
-          to="/"
-          style={{
-            color: `#FFF`,
-            textDecoration: `none`,
-            flex: `0 0 320px`,
-          }}
-        >
+      <Content>
+        <LinkHome to="/">
           <Logo src={logoImg} />
           <Title>{siteTitle}</Title>
-        </Link>
+        </LinkHome>
         <NavigatorContainer>
           <NaviGatorItem to="/">主页</NaviGatorItem>
           <NaviGatorItem to="/blog">博客</NaviGatorItem>
           <NaviGatorItem to="/treasure">百宝箱</NaviGatorItem>
           <NaviGatorItem to="/about">关于</NaviGatorItem>
         </NavigatorContainer>
-      </MainContianer>
+      </Content>
     </HeaderContainer>
   );
 };
