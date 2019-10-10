@@ -13,20 +13,34 @@ import Img from "gatsby-image"
  * - `useStaticQuery`: https://www.gatsbyjs.org/docs/use-static-query/
  */
 
-const Image = () => {
+const Image = ({uri}) => {
   const data = useStaticQuery(graphql`
     query {
-      placeholderImage: file(relativePath: { eq: "gatsby-astronaut.png" }) {
-        childImageSharp {
-          fluid(maxWidth: 300) {
-            ...GatsbyImageSharpFluid
+        allImageSharp {
+          nodes {
+            fluid {
+              base64
+              tracedSVG
+              aspectRatio
+              src
+              srcSet
+              srcWebp
+              srcSetWebp
+              sizes
+              originalImg
+              originalName
+              presentationWidth
+              presentationHeight
+            }
           }
         }
       }
-    }
   `)
-
-  return <Img fluid={data.placeholderImage.childImageSharp.fluid} />
+  const filterNodes = data.allImageSharp.nodes.filter(n => n.fluid.originalName === uri);
+  if (filterNodes.length === 0) {
+    throw new Error('请检查传入的图片名是否正确！');
+  }
+  return <Img fluid={filterNodes[0].fluid} />
 }
 
 export default Image

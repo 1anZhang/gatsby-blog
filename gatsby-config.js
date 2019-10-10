@@ -1,11 +1,51 @@
 module.exports = {
   siteMetadata: {
-    title: `Gatsby Default Starter`,
-    description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
-    author: `@gatsbyjs`,
+    title: `张岩の个人网站`,
+    description: `the journey begin！`,
+    author: `张岩`,
+    background_color: `#FCF040`,
+    theme_color: `#FCF040`,
+    primary_color1: '#66FEAD',
+    primary_color2: '#6AE62E',
+    primary_color3: '#E6A92E',
+    primary_color4: '#FE9A68',
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
+    `gatsby-plugin-styled-components`,
+    {
+      resolve: 'gatsby-plugin-mdx',
+      options: {
+        gatsbyRemarkPlugins: [
+          {
+            resolve: 'gatsby-remark-external-links',
+            options: {
+              target: '_blank',
+              rel: 'nofollow noopener noreferrer',
+            },
+          },
+          {
+            resolve: 'gatsby-remark-images',
+            options: {
+              maxWidth: 830,
+              quality: 90,
+              withWebp: true,
+              linkImagesToOriginal: false,
+            },
+          },
+          // TODO: Replace with "mdx-component-autolink-headers"
+          {
+            resolve: 'gatsby-remark-autolink-headers',
+            options: {
+              maintainCase: false,
+            },
+          },
+        ],
+        // TODO: Remove this workaround
+        // https://github.com/gatsbyjs/gatsby/issues/15486
+        plugins: [`gatsby-remark-images`, `gatsby-remark-autolink-headers`],
+      },
+    },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
@@ -13,6 +53,13 @@ module.exports = {
         path: `${__dirname}/src/images`,
       },
     },
+    {
+        resolve: 'gatsby-source-filesystem',
+        options: {
+          name: 'posts',
+          path: `${__dirname}/src/posts`,
+        },
+      },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     {
@@ -21,8 +68,8 @@ module.exports = {
         name: `gatsby-starter-default`,
         short_name: `starter`,
         start_url: `/`,
-        background_color: `#663399`,
-        theme_color: `#663399`,
+        background_color: `#FCF040`,
+        theme_color: `#FCF040`,
         display: `minimal-ui`,
         icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
       },
