@@ -1,7 +1,7 @@
 {
-  "name": "zhangyxys-blog",
+  "name": "zhangyxy-blog",
   "private": true,
-  "description": "zhang yan's blog",
+  "description": "zhangyxy's blog",
   "version": "0.1.0",
   "author": "zhangyxy <zhangyxy94@gmail.com>",
   "dependencies": {
