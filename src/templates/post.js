@@ -1,7 +1,15 @@
 import React from 'react';
 import { graphql } from 'gatsby';
-import Layout from '../components/layout';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
+import {MDXProvider} from '@mdx-js/react';
+import Layout from '../components/layout';
+import CodeBlock from '../components/CodeBlock';
+
+const components = {
+  h1: props => <h1 style={{color: 'tomato'}} {...props} />,
+  pre: props => <div {...props} />,
+  code: CodeBlock
+}
 
 export default ({
   pageContext: { slug, prev, next },
@@ -9,10 +17,9 @@ export default ({
 }) => {
   return (
     <Layout>
-      <div>
-        <h1>{postNode.frontmatter.title}</h1>
+      <MDXProvider components={components}>
         <MDXRenderer>{postNode.body}</MDXRenderer>
-      </div>
+      </MDXProvider>
     </Layout>
   );
 };

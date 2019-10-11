@@ -1,0 +1,315 @@
+---
+title: 微任务和宏任务:用户手册（译）
+date: 2018-05-24 10:45:04
+tags: javascript
+---
+
+### 理解JavaScript中的宏/微任务
+
+[原文地址](https://blog.bitsrc.io/microtask-and-macrotask-a-hands-on-approach-5d77050e2168)
+
+JS代码是单线程运行的，它使用事件循环来处理异步代码。我们给事件添加了监听，所以当事件完成时，回调函数就会执行。在了解以上这些概念之前，我们先了解一下JavaScript引擎是如何工作的。 JavaScript的引擎是由栈，堆和任务队列组成的。
+
+栈(Start) 是一个和数组类似的数据结构，用来追踪当前执行的函数。
+
+```js
+function m() {
+  a()
+  b()
+}
+m()
+```
+
+这里有一个函数 `m`，里面调用了 `a` 和`b`函数。在执行时， `m`的地址会被放入内存中的调用栈。在JS引擎执行函数之前，它会先把这个函数的地址放入调用栈。那么问题来了，为什么需要把函数地址，参数放入调用栈里呢？
+
+在计算机底层中，有一些寄存器： `EAX`, `EBX`, `ECX`, `ESP`, `EIP`。他们是用来给CPU存放临时变量以及运行程序的。EAX和EBX是用来计算的，ECX是一个计数器，通常在循环中计数。ESP(栈指针)保存了当前栈的地址，EIP保存当前程序执行到的地址。
+
+```c++
+RAM                 EIP = 10
+0 |     |           ESP = 21
+1 |a(){}|
+2 |     |             Call Stack
+3 |b(){}|             14|   |
+4 |     |             15|   |
+5 |     |             16|   |
+6 |m(){ |             17|   |
+7 | a() |             18|   |
+8 | b() |             19|   |
+9 |}    |             20|   |
+10|m()  |             21|   | 
+```
+
+上面这个草图展示了执行时的内存状态。
+
+我们看到程序开始加载，初始化调用栈，ESP和EIP。程序的入口是 `m()`，它在内存中的地址是10，所以EIP也是10.于是，CPU就知道程序的入口为10。
+
+然后，从 `m()`开始执行，当运行到新的函数调用，程序就会挑战到新的函数中，从那里继续执行。然后，当函数执行完毕并返回，继续执行之前的函数。调用栈就保存了函数调用，保证在函数返回后能继续执行之前的函数。每一次函数调用，我们都会把EIP的地址放入调用栈，下面展示了 `a()`调用时的状态。
+
+```c++
+RAM                 EIP = 1
+  0 |     |           ESP = 20
+➥1 |a(){}|
+  2 |     |             Call Stack
+  3 |b(){}|             14|   |
+  4 |     |             15|   |
+  5 |     |             16|   |
+  6 |m(){ |             17|   |
+  7 | a() |             18|   |
+  8 | b() |             19|   |
+  9 |}    |             20|   |
+  10|m()  |             21| 7 | 
+```
+
+当函数 `a()`返回时，从调用栈弹出7到EIP，告诉CPU从7这个位置继续执行。
+
+那么为什么参数也要放入调用栈呢？是因为在函数接收参数并执行时，使用EBP寄存器来获取栈中的值。这些值就是它的参数。这样函数就能顺利拿到它的参数继续执行了。
+
+堆(Heap): 对象分配在堆中。和栈不同，对象通常使用new操作符创建并放入栈中。
+
+```js
+const lion = new Animal('lion', 'very_aggresive')
+```
+
+通过new创建了一个Animal对象，并且把他的地址赋给lion变量。由于堆是无序的，所以系统必须找到一种方式管理堆，以防止内存黑洞。
+
+任务队列(Task Queue)：在之后的某个时间将会被引擎执行的任务会被放入这里。
+
+事件循环(Event Loop)是一个持续运行的程序，它检查调用栈是否为空，如果调用栈为空，就从任务队列中取一个任务开始执行。
+
+现在我们知道了事件在JS中的用处，接下来我们将深入任务队列。
+
+相关阅读 :
+
+- “Assembly Language: Function Calls” by Jennifer Rexford
+- [Writing a JavaScript framework — Execution timing, beyond setTimeout](https://blog.risingstack.com/writing-a-javascript-framework-execution-timing-beyond-settimeout/) by [Bertalan Miklos](https://gist.github.com/philipszdavido/@solkimicreb1)
+- [Concurrency model and Event Loop — Mozilla Web Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop)
+
+### 微任务(Microtask)和宏任务(Macrotask)
+
+任务循环:
+
+```js
+while (eventLoop.waitForTask()) {
+  eventLoop.processNextTask()
+}
+```
+
+任务队列中的是宏任务，每次执行一个宏任务。当宏任务执行完毕，微任务队列同样也会被执行，一次循环微任务会全部被执行。
+
+```js
+while (eventLoop.waitForTask()) {
+  const taskQueue = eventLoop.selectTaskQueue()
+  if (taskQueue.hasNextTask()) {
+    taskQueue.processNextTask()
+  }
+  const microtaskQueue = eventLoop.microTaskQueue
+  while (microtaskQueue.hasNextMicrotask()) {
+    microtaskQueue.processNextMicrotask()
+  }
+}
+```
+
+如上代码展示了一次事件循环的处理，在下一次宏任务执行之间可能需要一些时间，这可能会导致UI无响应以及应用程序停滞。
+
+为了证明微任务在宏任务之前执行，我们来看下面这个例子：
+
+```js
+// example.js
+console.log('script start');
+// 宏任务
+setTimeout(function() {
+  console.log('setTimeout');
+}, 0);
+// 微任务
+Promise.resolve().then(function() {
+  console.log('promise1');
+}).then(function() {
+  console.log('promise2');
+});
+console.log('script end');
+```
+
+运行结果如下:
+
+```js
+script start
+script end
+promise1
+promise2
+setTimeout
+```
+
+注意： `setTimeout`, `setInterval`, `setImmediate`等属于宏任务。`process.nextTick`, `Promises`, `MutationObserver`等属于微任务。
+
+虽然setTimeout设置延迟为0，但是还是在最后执行。为什么呢？
+
+之前提到过，在一次事件循环中，先处理宏任务然后所有微任务都会被执行。你可能会产生疑惑，难道setTimeout不是应该先于Promise执行吗？
+
+我们来看之前的代码，整个代码作为第一次宏任务执行，接下来打印了`script start`。然后`setTimeout`函数调用，给宏任务注册了一个事件，然后Promise调用，微任务队列加入两个事件，最后打印了 `script end`。初始运行结束。
+
+以上属于宏任务，接下来会执行微任务。所以Promise的回调函数开始执行，打印了 `promise1`，因为它通过then又返回了一个新的微任务，这个微任务继续被执行，打印 `promise2`。(注意，微任务可以在一次循环中执行多次，通过微任务返回微任务，在下次宏任务执行前可以执行多次) 接下来，微任务队列为空，准备进入下一次事件循环，还有一个宏任务。
+
+此时，UI绘制函数调用，重绘页面。开始下一个宏任务，那就是`setTimeout`,它打印了`setTimeout`。此时所有任务队列都为空。
+
+让我们用JS代码来模拟微/宏任务。
+
+```js
+// js_engine.js
+let macrotask = []
+let microtask = []
+let js_stack = []
+// 微任务
+function setMicro(fn) {
+	microtask.push(fn)
+}
+// 宏任务
+function setMacro(fn) {
+ macrotask.push(fn)
+}
+// 宏任务
+function runScript(fn) {
+ macrotask.push(fn)
+}
+global.setTimeout = function setTimeout(fn, milli) {
+	macrotask.push(fn)
+}
+ // 自定义代码
+function runScriptHandler() {
+	for (var index = 0; index < js_stack.length; index++) {
+		eval(js_stack[index])
+  }
+}
+// start the script execution
+runScript(runScriptHandler)
+// 执行宏任务
+for (let ii = 0; ii < macrotask.length; ii++) {
+	eval(macrotask[ii])()
+  if (microtask.length != 0) {
+    // process microtasks
+		for (let __i = 0; __i < microtask.length; __i++) {
+      eval(microtask[__i])()
+    }
+    // empty microtask
+    microtask = []
+	}
+}
+```
+
+首先，我们声明了微任务队列和宏任务队列。当宏任务比如setTimeout调用时，它的回调函数会被放入宏任务队列，微任务队列也类似。
+
+js_stack用来保存即将执行的函数和声明。事实上，它保存了整个JS文件中的代码。我们通过循环使用eval()来执行stack中的代码。
+
+然后，我们声明了setMicro, setMacro, runScript, setTimeout.这四个函数。这些函数接受回调函数 `fn` 作为参数，然后把它们放进响应的宏/微任务队列。
+
+在这个例子中，我们只是把相应的回调函数放入相应的队列中，我们重新定义了setTimeout函数，当调用setTimeout时，会调用我们定义的函数，并把回调放入宏任务中。
+
+我们定义了一个runScript函数，这个函数模拟了全局初始化的“start”事件，由于全局事件也属于宏任务，我们把回调函数放入宏任务队列。runScriptHandler模拟了JS文件中的代码，当开始执行时，`js_stack`中的代码依次执行。
+
+首先，我们执行runScript函数，执行这个js_stack中的函数。当调用栈为空时，任务队列开始执行。在每次循环中，先执行宏任务，再执行微任务。
+
+我们使用for循环执行宏任务数组，在循环内部我们又使用for循环执行微任务。当所有的微任务执行完毕，下一个宏任务开始执行。
+
+让我再写一些代码:
+
+```js
+console.log('start')
+console.log(`Hi, I'm running in a custom JS engine`)
+console.log('end')
+```
+
+我们把它放入js_stack数组里:
+
+```js
+...
+// your script here
+js_stack.push(`console.log('start')`)
+js_stack.push("console.log(`Hi, I'm running in a custom JS engine`)")
+js_stack.push(`console.log('end')`)
+...
+```
+
+js_stack就像我们的JS文件，JS引擎读取并执行所有语句。 然后我们执行 `node js_engine.js`, 可以看到如下输出:
+
+```js
+start
+Hi, I'm running in a custom JS engine
+end
+```
+
+现在我们再尝试一下之前的例子，并使用自定义的函数：
+
+```js
+console.log('script start');
+setTimeout(function() {
+  console.log('setTimeout');
+}, 0);
+setMicro(()=> {
+  console.log('micro1')
+  setMicro(()=> {
+    console.log('micro2')
+  })
+})
+console.log('script end');
+```
+
+我们用setMicro替代了Promise，其他的都一样，以下我们期望的结果:
+
+```js
+script start
+script end
+micro1
+micro2
+setTimeout
+```
+
+为了在自定义引擎里使用，我们修改一下代码:
+
+```js
+// js_engine.js
+...
+js_stack.push(`console.log('script start');`)
+js_stack.push(`setTimeout(function() {
+  console.log('setTimeout');
+}, 0);`)
+js_stack.push(`setMicro(()=> {
+  console.log('micro1')
+  setMicro(()=> {
+    console.log('micro2')
+  })
+})`)
+js_stack.push(`console.log('script end');`)
+...
+```
+
+运行 `node js_engine.js`, 结果出现了:
+
+```bash
+$ node js_engine
+script start
+script end
+micro1
+micro2
+setTimeout
+```
+
+和之前的结果一样，我们自定义引擎正确的模拟了真实JS引擎的运行。
+
+这里有以下几个重点:
+
+- 任务是从任务队列中拿取的.
+- 微任务和宏任务是不同的东西。
+- 微任务是在当前宏任务执行完毕时开始的。
+- 微任务可以继续添加微任务，知道下一次事件循环之前，会执行所有微任务。
+- 微任务执行完毕，UI绘制开始。
+
+### 结论
+
+我们模拟了JS引擎中的任务队列，了解了队列中的任务是如何执行的。并且我们知道了宏任务和微任务。所有的微任务是在一次事件循环中执行的。
+
+感谢阅读 !!!
+
+### 资源
+
+如果想更详细的了解，下面这个视频可能会有所帮助:
+
+- [The event loop by Philip Roberts at JSConf](https://www.youtube.com/watch?v=8aGhZQkoFbQ)

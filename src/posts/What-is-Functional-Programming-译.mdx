@@ -1,0 +1,310 @@
+---
+title: (什么是函数式编程)What is Functional Programming(译)
+date: 2018-01-05 11:19:36
+tags: 翻译, functional programming
+---
+
+[========================原文地址======================](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-functional-programming-7f218c68b3a0)
+
+> 注：翻译完感觉这篇文章讲的比较浅，简单的阐述了关于函数式编程的一些概念，看完能对整个函数式编程内容有一个大概的认知，适合刚接触函数式编程的人，如果要深入了解某一概念，这篇文章推荐的一些阅读还是蛮不错的。 
+
+### 函数式编程(Functional Programming)
+
+在JavaScript世界中，函数式编程(Functional programming)逐渐成为一个热门话题。就在几年前，很少有人知道什么是函数式编程，但是在过去的3年里几乎每个大型应用中都会使用函数式编程的思想。
+
+**函数式编程(FP)**通过避免**共享状态**，**可变数**据和**一些副作用**，使用**纯函数**来构建一个应用。函数式编程属于**声明式编程**而不是**命令式编程**。面向对象编程的应用状态是共享的，并且和操作状态的方法共同放在同一个对象中，和它不同，函数式编程的状态流通过的是纯函数。
+
+> - **命令式编程**：命令“机器”*如何*去做事情*(how)*，这样不管你想要的*是什么(what)*，它都会按照你的命令实现。
+> - **声明式编程**：告诉“机器”你想要的*是什么(what)*，让机器想出*如何*去做*(how)*。
+
+函数式编程是一种编程范式，意味着他是一种方式去思考软件基础结构，去定义一些规则。面向对象编程(OOP)和程序式编程(procedural programming)也属于编程范式。
+
+相比于OOP和命令式编程的代码，函数式编程的代码更加的简洁，可预测并且更容易测试。不过对于不熟悉它的人和初学者，函数式编程的代码可能会更加的难以理解。
+
+如果你想google函数式编程术语，你可能会被它的一些学术说法给吓退。它的学习曲线确实有些陡峭，但是对于一个刚学习不久的JavaScript开发者，学习函数式编程的概念并且在你的项目中使用它绝对是一个很好的提高自己的机会。
+
+> 心灵鸡汤：**Don’t let all the new words scare you away. It’s a lot easier than it sounds.**
+
+对于你来说最难的就是去接触那些完全不熟悉的词汇和概念。以下是一些你在学习和理解函数式编程中所需要了解的词汇(概念)：
+
+- 纯函数
+- 函数组合
+- 避免共享的状态
+- 避免可变的状态
+- 避免副作用
+
+也就是说，如果你想要理解函数式编程，首先你要理解的就是以下这些核心概念：
+
+**纯函数**就是：
+
+- 如果一个函数的输入参数是相同的，那么它的输出结果一定相同
+- 没有任何副作用
+
+在函数式编程中，纯函数有很多的重要属性。**referential transparency**(参数透明？不知道咋翻)(意思就是说你可以直接用这个函数的返回结果替换掉这个函数，比如
+
+```js
+function add(a, b) {
+  return a + b
+}
+//add是一个纯函数，所以你用结果代替函数调用不会有任何问题
+let re = add(1, 2)
+let res = 3
+```
+
+想要了解更多 **纯函数**，可以阅读[“What is a Pure Function?”](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976) 
+
+**函数组合**指的是连接两个或者多个函数使之组成一个新的函数或者是优化一些计算的过程，函数组合是理解函数式编程中软件如何构成的重要一步，可以阅读 [“What is Function Composition?”](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-function-composition-20dfb109a1a0) 了解更多。
+
+### 共享状态
+
+共享状态指的是存在于共享作用域内的任何变量，对象或者内存空间，或者是在两个作用域之间传递的对象属性。共享作用域包括全局作用域和闭包作用域。通常在OOP中，对象在不同作用域的共享是通过往其他对象的熟悉中添加该对象实现的。
+
+比如一个游戏中会有一个主游戏对象，一些特征和游戏item作为属性存放在主游戏对象中。函数式编程通过使用不可变数据结构和纯计算从已有的数据中产生新的数据，而不使用共享数据。有关的更多内容，建议阅读 [“10 Tips for Better Redux Architecture”](https://medium.com/javascript-scene/10-tips-for-better-redux-architecture-69250425af44)。
+
+共享状态的主要问题就是，为了理解函数产生的一些影响，你需要知道每一个共享变量被函数使用并改变的整个过程。这大大加大了理解的成本。
+
+假如你有一个user对象需要保存，你的`saveUser()`函数请求服务器的API，当还在请求的时候，用户又通过`updateAvatar()`修改了它的头像，并且发送了新的`saveUser()`，服务器返回的user对象会替换掉内存中相应的user对象。不幸的是，如果第二个response先到达了，头像已经修改完成，此时才收到第一个response，新的头像会被第一个response的头像给替换掉，这样客户端就会产生与服务器不同步的bug。这就是共享数据结构可能造成的问题。另一个很常见的问题是共享数据是依赖于时间的，改变一系列函数的顺序可能会造成递归错误，错误一步一步向后传递。
+
+时间依赖实例：
+
+```js
+// 共享状态会因为函数调用顺序的不同而改变
+const x = {
+  val: 2
+};
+
+const x1 = () => x.val += 1;
+
+const x2 = () => x.val *= 2;
+
+x1();
+x2();
+
+console.log(x.val); // 6
+
+// 顺序不同
+const y = {
+  val: 2
+};
+
+const y1 = () => y.val += 1;
+
+const y2 = () => y.val *= 2;
+
+y2();
+y1();
+
+// 结果也不同
+console.log(y.val); // 5
+
+```
+
+当你避免使用共享状态，调用函数的时间和顺序就不会改变最后的结果了。有了纯函数，同样的输入总会得到同样的结果。这就可以让每个函数完全独立的使用，使修改和重构代码更加便捷。其中一个函数的修改，或者调用它的顺序的修改，都不会影响整个程序的进程。
+
+```js
+const x = {
+  val: 2
+};
+
+const x1 = x => Object.assign({}, x, { val: x.val + 1});
+
+const x2 = x => Object.assign({}, x, { val: x.val * 2});
+
+console.log(x1(x2(x)).val); // 5
+
+
+const y = {
+  val: 2
+};
+
+// 因为函数并不改变原来的值，所以你可以随便调用，然后接下来还是可以得到你想要的值
+x2(y);
+x1(y);
+
+console.log(x1(x2(y)).val); // 5
+```
+
+在上面这个例子中，我们使用了`Object.assign()`，然后传递一个空对象作为第一个参数，把x复制到空对象中，这样可以避免直接操作x对象。如果不使用`Object.assign()`，就相当于我们创建了一个新的对象，并且把x复制到新对象来防止直接操作x，但是这种使用方法已经是很普遍的了。
+
+如果你仔细观察`console.log()`这一行，你会发现我们之前所提到的：函数组合。
+
+显然，如果你改变了组合顺序，结果会发生改变，`f(g(x))`不会总是等于`g(f(x))`，但是，外部输入的变量不会影响函数的运行，这是一个很好的特性。如果你不使用纯函数，那么你必须要知道该函数使用或影响的每个变量的全部生命周期，来确定函数的结果。
+
+### 不可变(Immutability)
+
+不可变对象是指创建后不可以被修改的对象，相反的，可变对象就是创建后可以被修改的对象。
+
+Immutability是函数编程的核心，如果没有Immutability，程序中的数据流会影响性能。没有State的历史状态，并且会发生一些奇怪的bug。想要了解更多关于Immutability的重要性，可以查看 [“The Dao of Immutability.”](https://medium.com/javascript-scene/the-dao-of-immutability-9f91a70c88cd)
+
+在JavaScript中，immutability和const的概念很容易被混淆。const并没有创建不可变对象，它只是不能重新分配变量指向的地址，但是你可以改变const创建的对象的属性，所以const并不是不可变的。
+
+不可变对象在任何时候都不能被改变，你可以通过deep freezing来让一个值变为不可变的，JavaScript有一个方法可以冻结一个只有一层的对象。
+
+```js
+const a = Object.freeze({
+  foo: 'Hello',
+  bar: 'world',
+  baz: '!'
+});
+
+a.foo = 'Goodbye';
+// Error: Cannot assign to read only property 'foo' of object Object
+```
+
+冻结的对象是浅层不可变的，当深度超过一的时候，就可以修改了。
+
+```js
+const a = Object.freeze({
+  foo: { greeting: 'Hello' },
+  bar: 'world',
+  baz: '!'
+});
+
+a.foo.greeting = 'Goodbye';
+
+console.log(`${ a.foo.greeting }, ${ a.bar }${a.baz}`);
+// Goodbye, world!
+```
+
+被冻结的对象的最外层的属性是不可以被改变的，但是如果任意属性仍然是对象的话，这个对象的属性就可以被改变了，所以被冻结的对象也不是不可变的，(除非你遍历该对象，冻结所有依旧是对象的属性)。
+
+在很多函数式编程语言中，有一种很特别的不可变数据结构叫做：**trie data structures**，它是深度冻结的，也就是说任何属性都是不可变的，无论这个对象有多少层，都被冻结了。
+
+Tires利用**结构共享**来共享内存地址引用给所有的不可变对象，当一个对象改变时，没有改变的那部分的属性在内存中是只存在一份的，其他所有用到这些属性的不可变对象共享这一部分。这样可以节约很多内存，提高性能。
+
+关于提高性能，举个栗子，当你想要比较两个不可变对象的时候，只需要比较他们根节点的引用即可，如果一个对象改变了，它必然从改变的节点到根节点的都会创建新的节点，引用自然也就不同了，如果两个对象根节点相同，那么一定是没有改变的，所以比较不可变对象时，只需要比较他们的根节点引用。
+
+有很多的库实现的不可变数据，比如 [Immutable.js](https://github.com/facebook/immutable-js) and [Mori](https://github.com/swannodette/mori).
+
+原作者两个都用过，并且在大项目里使用了Immutable.js，了解更多，查看[“10 Tips for Better Redux Architecture”](https://medium.com/javascript-scene/10-tips-for-better-redux-architecture-69250425af44).
+
+### 副作用(side effect)
+
+副作用(side effect)指的是任何一个状态的改变可以被调用函数的外部知道，而不是通过他的返回值，side effects包括：
+
+- 修改任何外部变量或者对象属性(全局变量、作用域上的任何变量)
+- 打印到控制台
+- 输入到屏幕
+- 写入文件
+- 写入网络流中
+- 触发任何外部程序
+- 用side-effects触发外部函数
+
+在函数式编程中我们应该尽量避免side effects，这样可以使程序更加容易理解和测试。
+
+HasKell 和其他函数式编程会使用 [**monads**](https://en.wikipedia.org/wiki/Monad_%28functional_programming%29)把side effects封装成纯函数，关于monads内容太多了，就不继续深入了。
+
+你需要了解的是side-effect应该被独立出来，如果你能将side-effect与你程序的逻辑分离开，你的软件将会更容易扩展，重构，debug，测试以及维护。
+
+这也就是为什么大部分前端框架鼓励开发者将state和渲染组件分离开。
+
+高阶组件的复用性
+
+函数式编程通常会重复使用公共工具来处理数据，面向对象编程通常会将方法和数据放在对象中，这些定义在对象中的方法只能处理对象中特定的数据。在函数式编程中，任何类型的数据都是一样的。比如`map()`函数可以处理任意类型的数据，因为它接受函数作为他的参数，而这个函数可以自定义来处理任何想要处理的数据。函数式编程是通过**高阶函数(higher order functions)**来生成这些工具的。
+
+JavaScript拥有**first class functions**，意思就是他可以接收函数作为参数，并且可以将函数作为返回值返回。
+
+一个高阶组件函数可以是任意接收函数作为参数，或者返回函数，或者两者都有的一个函数。它有以下特点：
+
+- 提取或分离actions，effects，或者通过回调函数、promiss、monads来异步处理控制流
+- 创建的工具函数一般都能处理多种数据类型
+- 接收函数作为参数来使函数可以重复利用，使用柯里化函数(curried function)来进行函数组合
+- 接收一个函数数组并且返回这一系列函数的组合
+
+#### Containers, Functors, Lists, and Streams
+
+Functor就是指可以被映射的某些东西，也就是说它是一个可以接收函数作为参数的container，当你看到functor这个词时，你可以想象可映射的(mappable)。
+
+之前我们使用过的函数`map()`可以接收多种数据类型的参数，它使用functor API进行映射操作，`map()`使用的重要的流控制操作调用了这一接口，在`Array.prototype.map()`中，container是一个数组，也可以是任意定义了functorAPI的数据结构。(这里翻译起来有些奇怪，看下面的例子就能理解什么是Functor了，其实就是告诉别人这个数据结构要被操作的数据的位置和方法。)
+
+`Array.prototype.map()`可以让你从mapping 工具中抽取数据类型，并且让`map()`可以处理任何数据类型，我们创建了一个简单的`double()` mapping，他让所有的值乘2。
+
+```js
+const double = n => n * 2; //这个double就是mapping工具，他告诉map函数怎么处理传进来的数据
+const doubleMap = numbers => numbers.map(double);
+console.log(doubleMap([2, 3, 4])); // [ 4, 6, 8 ]
+```
+
+如果我们想要处理游戏中某个对象的数据，要将他们的points乘2，我们所要做的就是修改 `double()`函数，将对象中的points映射一下，程序就按照你的想法运行了。
+
+```js
+const double = n => n.points * 2;
+
+const doubleMap = numbers => numbers.map(double);
+
+console.log(doubleMap([
+  { name: 'ball', points: 2 },
+  { name: 'coin', points: 3 },
+  { name: 'candy', points: 4}
+])); // [ 4, 6, 8 ]
+```
+
+关于functor，高阶函数这些抽象概念的使用，主要是为了使用生成工具函数( generic utility functions)来处理任意数据类型的数据，这在函数式编程中是很重要的。你可以查看相似的概念：[all sorts of different ways](https://github.com/fantasyland/fantasy-land).
+
+> “A list expressed over time is a stream.”  //正在运行处理的列表实际上是一个流
+
+并且，数组以及functor不是在container中应用数据的唯一实现方式。比如，一个数组只是一系列的某个东西，但是正在运行处理的列表实际上是一个流，所以你可以使用同种工具去处理即将到来的流，这在函数式编程中会非常常见。
+
+### (声明式vs命令式)Declarative vs Imperative
+
+函数式编程属于声明式编程，意味着程序的逻辑是表达式而不是显式定义的控制流。
+
+命令式编程会显式的定义实现想要的结果的每一步，写下每一行代码。描述的是**控制流**：**如何去做**。
+
+声明式编程会抽象整个控制流程，描述的是**数据流：要做什么**。
+
+举个栗子，下面是命令式编程，想要给数组的每个元素都乘2，它描述了整个逻辑流程，告诉程序该如何去做。
+
+```js
+const doubleMap = numbers => {
+  const doubled = [];
+  for (let i = 0; i < numbers.length; i++) {
+    doubled.push(numbers[i] * 2);
+  }
+  return doubled;
+};
+
+console.log(doubleMap([2, 3, 4])); // [4, 6, 8]
+```
+
+下面的声明式编程做同样的事，但是它把控制流的逻辑抽象为`Array.prototype.map()`工具，这样我们对于数据流有了更加清晰了解。
+
+```js
+const doubleMap = numbers => numbers.map(n => n * 2);
+
+console.log(doubleMap([2, 3, 4])); // [4, 6, 8]
+```
+
+**Imperative**的代码频繁使用statements，**statement**是指执行一些动作的代码段，比如一些常用的 `for`, `if`, `switch`, `throw`, 
+
+**Declarative**代码依赖于更多的expressions。**expression**是指计算一些值的代码段，Expressions通常是函数调用，值以及预算符的组合。
+
+expressions的例子:
+
+```js
+2 * 2
+doubleMap([2, 3, 4])
+Math.max(4, 3, 2)通常在代码中，你可以发现，一个表达式被赋值给某个变量，作为另外一个函数的返回值或者作为参数传递，也就出现了，一个函数的参数是函数，返回的依旧是函数。
+```
+
+### 总结
+
+函数式编程的特点:
+
+- 使用纯函数
+- 使用不可变数据
+- 使用组合函数
+- 有很多使用高阶函数来都处理多种数据类型的生成，重用工具，而不是只能处理特定数据的方法。
+- 声明式编程而不是命令式编程
+- 使用表达式(Expressions)而不是声明(statements)
+- 使用容器和高阶函数
+
+#### 阅读清单
+
+- [What is a Closure?](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-closure-b2f0d2152b36#.ecfskj935)
+- [What is the Difference Between Class and Prototypal Inheritance?](https://medium.com/javascript-scene/master-the-javascript-interview-what-s-the-difference-between-class-prototypal-inheritance-e4cd0a7562e9#.h96dymht1)
+- [What is a Pure Function?](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-pure-function-d1c076bec976#.4256pjcfq)
+- [What is Function Composition?](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-function-composition-20dfb109a1a0#.i84zm53fb)
+- [What is Functional Programming?](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-functional-programming-7f218c68b3a0#.jddz30xy3)
+- [What is a Promise?](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-promise-27fc71e77261#.aa7ubggsy)
+- [Soft Skills](https://medium.com/javascript-scene/master-the-javascript-interview-soft-skills-a8a5fb02c466)

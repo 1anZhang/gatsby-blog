@@ -1,0 +1,56 @@
+---
+title: 33 Fundamentals Every JavaScript Developer Should Know（译）
+date: 2018-09-09 12:24:10
+Tags: js
+---
+
+> 翻译自（[Stephen Curtis](https://medium.com/@stephenthecurt)）的[这篇文章](https://medium.com/@stephenthecurt/33-fundamentals-every-javascript-developer-should-know-13dd720a90d1)。
+>
+> 适用于想要深入了解原理的开发者。
+>
+> [这里是对应的学习资料，内容有点多](https://github.com/leonardomso/33-js-concepts)
+
+你已经学习了**React**，熟悉**npm install**，并且可以根据你的需求配置**webpack.config.js**。你可以利用现成的**模块或库**干任何你想干的事情，貌似做任何事情都有现成的**库或者模块**。但是，如果你找不到一个可以用的**库或者模块**，如果你不能在**Stact Overflow**上找到一个合适的答案呢？你觉得自己是一个可靠的开发者，但是总是有些让人难受的感觉缠绕着你。你不想去考虑它，但是它就在那里。这对你来说就像是巫术，如果没有示例，你可能就无法搞定一些问题。
+
+你能如何做呢？如果别人发现怎么办呢？也许这就是白板让你害怕的真实原因？担心没有更多的开发伙伴，我们其实一直在那里。解决方案无时无刻不在凝视着你，并且我们都知道你错过了它。也许你需要多花点时间去真正的理解JavaScript，甚至学习上一点计算机科学。
+
+这些是你需要做的:
+
+1. 理解js这种高级语言的一行代码如何解释并且在调用栈中执行的。(从高级语言到机器语言)
+2. 理解不同的基础类型(*primitive types*)在内存中是如何存储的，深入到内存地址，空间分配以及二进制表达。(需要深入到double类型的二进制存储)。
+3. 理解值类型(*value types*)以及引用类型(*reference types*)以及赋值和赋予指针。
+4. 理解隐式类型(*implicit typing*), 显式类型(*explicit typing*),名义类型 (*nominal typing*), 结构类型(*structural typing*), and 鸭子类型(*duck typing*).
+5. 理解 `**==**` vs `**===**` vs `**typeof**`.
+6. 理解函数作用域(*function scope*)，块级作用域(*block scope*)以及词法作用域(*lexical scope*)。
+7. 理解表达式(*expression*)和声明(*statement*)的不同，以及评估(*evaluate*)表达式的含义。
+8. 理解当一个表达式执行(evaluated)，传参，返回结果以及变量赋值、取值等时刻内存以及调用栈内发生了什么。
+9. 理解立即执行函数(*IIFE*)，模块，命名空间。以及为什么ES6模块化和块级作用域不能完全取代立即执行函数。
+10. 理解消息队列和时间循环在JavaScript中的运行以及它如何影响时间(timing)，挂起(hang)，异步(async)等等
+11. (浏览器)理解`**setTimeout**`, `**setInterval**`, 和`**requestAnimationFrame**`。
+12. 理解哪些操作更加耗费性能或内存以及为什么。海量的循环迭代是最耗费性能的吗？O(n)中的O代表什么？使用*jsperf*和**performance.now**测试并了解性能。
+13. 理解什么是*opts*和deopts，以及如何在不同的JavaScript引擎中跟上最新的步伐。
+14. 理解如何用二进制，八进制，十进制，科学符号等表达数字。
+15. 理解如何使用位操作(*bitwise operators*)，*typed arrays*和*array buffers*的原理。通过理解*RGBA*来学习如何处理二进制数据。
+16. (浏览器)理解内存中的DOM和布局树是如何构建以及修改的，重排(*reflows*)，布局(*layouts*)，组合(*composites*)和重绘(*repaints*)是在何时触发的，以及如何触发的。
+17. 理解**new**，*constructors*，`**instanceof**`和instances。
+18. 理解原型继承(*prototypical inheritance*)和原型链(*prototype chain*)。以及为什么通过**class**声明JavaScript仍然没有实现类继承(*classical inheritance*)。
+19. 理解**Object.create**和**Object.assign**的不同。
+20. 理解工厂(*factories*)和类(*classes*)，以及这些方法的不同。
+21. 理解成员属性(*member properties*)和原型上的属性。
+22. 理解纯函数(*pure functions*)，副作用(*side effects*)和可变状态(*state mutation*)。
+23. 理解如何使用**map**/**reduce**/**filter**替代**for**/**while**，以及为什么。
+24. 理解什么是*lambdas*，以及**map**/**reduce**/**filter**，箭头函数是如何改变你思考代码的方式。
+25. 理解闭包(*closures*)的工作原理，以及它的调用栈结构。
+26. 理解高阶函数(*high order functions*)的工作原理，以及何时使用它们。
+27. 理解什么是抽象数据结构(*abstract data structures*)，怎样在JavaScript中使用，以及一些典型用例。
+28. 理解递归(*recursion*)以及怎样使用递归来构建抽象数据结构。
+29. 理解解决常见问题的算法，熟悉如何通过Google找到算法实例，毕竟没人能够记住所有算法的实现。
+30. 理解在继承(*inheritance*)，多态(*polymorphism*)和代码重用(*code reuse*)时*is a*和*has a*的关系及区别。
+31. 熟悉常见的设计模式，以及它们的使用。
+32. 理解偏函数 (*partial functions*), 柯里化(*currying*),组合 (*compose*), and 管线(*pipe*)，以及为什么一元函数如此有用。
+33. 理解JavaScript和强类型的编译语言中的映射(*reflection*)的不同以及为什么。
+
+**我忘记了摇滚乐明星开发者所指出的:**
+
+34. [Erika Ritter](https://medium.com/@JavaScriptErika) 提醒了我，理解委托(*delegates*)也很重要。原型的上下文中的委托以及它与this的关系，理解`bind`, `call`, 和 `apply` 的工作原理。Bonus：(浏览器)理解事件委托
+

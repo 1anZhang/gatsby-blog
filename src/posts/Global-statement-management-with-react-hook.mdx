@@ -1,0 +1,251 @@
+---
+title: 使用 React Hooks 来管理全局状态（译）
+date: 2018-12-07 15:33:57
+tags: hook react
+---
+
+# 使用React Hooks来管理全局状态
+
+[原文地址](https://blog.usejournal.com/global-state-management-with-react-hooks-5e453468c5bf)
+
+Hooks，React16.7中的新特性，在前端开发中又掀起新一轮风暴。
+
+Hooks是一个基于函数式组件的新特性，可以让在函数中使用生命周期，本地状态和一些其他只能在类组件中才能使用的特性。这一新特性使得曾经的无状态组件不再是无状态的了。
+
+这篇文章不会详细介绍hooks的细节，我主要介绍如何对其进行扩展。在这之前，建议首先阅读了解[官方文档](https://reactjs.org/docs/hooks-intro.html)。
+
+> ⚠️ 注意: hooks目前还不是稳定版，所以不要在生产环境中使用它。
+
+### 无状态的函数式组件
+
+React提供的一个内建函数是 [*useState*](https://reactjs.org/docs/hooks-state.html)。我们可以通过它来给函数式组件提供本地状态。之前，我们只能通过创建一个继承与React.Component的类来获取state对象和setState函数。现在，我们可以再函数中使用state了，像下面的例子这样：
+
+```js
+import React, { useState } from 'react';
+
+function StatefulHello() {
+  const [timesClicked, updateTimesClicked] = useState(0);
+
+  return (
+    <div>
+      <h1>Hello, world!</h1>
+      <h2>The button inside this component was clicked {timesClicked} times</h2>
+      <button 
+         type="button" 
+         onClick={() => updateTimesClicked(timesClicked + 1)}
+      >
+        Update
+      </button>
+    </div>
+  );
+}
+```
+
+我们可以看到*useState*接收一个参数来定义state数据，然后返回相应的获取state的变量和修改state的函数。因为这里是对数组的解构，所以你可以自定义变量名(JavaScript中的这个特性真的很棒)。
+
+在函数组件中嵌入一个本地状态是多么简单。Hooks是一个很棒的东西，通过了解它的工作原理，我们可以创建自己的hooks。
+
+### 在组件间共享状态
+
+每个React的开发者都会遇到一个问题：那就是在两个没有直接关系的组件间传递状态，这非常令人头疼。像Redux和Mobx这种状态管理库的出现就是为了解决这个问题的，它们通过创建一个Store对象来存储状态，然后通过connecting/injecting把状态传递给需要使用状态的组件。
+
+#### useState hook只能管理本地状态
+
+让我们来看看下面这段代码，别的组件是无法知道用户到底点了多少次这个按钮。
+
+```js
+function StatefulHello() {
+  const [timesClicked, updateTimesClicked] = useState(0);
+
+  return (
+    <div>
+      <h1>Hello, component!</h1>
+      <h2>The button inside this component was clicked {timesClicked} times</h2>
+      <button type="button" onClick={() => updateTimesClicked(timesClicked + 1)}>
+        Update
+      </button>
+    </div>
+  );
+}
+
+function AnotherComponent() {
+  /* 如果在这里重新声明，两个状态是不同的
+  const [ timesClicked, updateTimesClicked] = useState() */
+  return (
+    <div>
+      <h1>
+        Hello, 这里是第二个组件，和第一个完全没关系
+      </h1>
+      <h2>
+        所以，这里完全没办法知道第一个组件的按钮被点击了多少次。
+      </h2>
+    </div>
+  );
+}
+```
+
+为了更好地了解hooks的工作方式我决定创建一个自定义的hook来给所有组件提供一个唯一的全局state。并且总共的代码也不超过20行！
+
+#### hook的生命周期
+
+我做了一些测试，并且总结了hook和生命周期之间的一些关系：
+
+- 当一个组件还没有被卸载( unmounted)，和hook相关的函数比如*setState*和*useState*在重渲染时就不会被重新创建，React总会使用已存在的那个引用。当然，*useEffect*也是这样的。
+- 当一个组件被卸载可，所有和hook相关的函数和对象都会被销毁。
+- 如果一个组件重新被挂载(mounted)，hook会重新生成一个新的实例，函数和对象都是全新的。
+
+当了解了hook的生命周期，我意识到我可以给 *useState* hook创建一个中间件来存储 *useState* 回调，并且在任何组件想要更新的时候调用这些回调函数。
+
+这个做法当然并不推荐，但是作为测试，我觉得还不错！并且由于我们只在React内部使用，性能方面也还不错。
+
+This is the MVP for the project:
+
+```js
+import { useState } from 'react';
+
+export const store = {
+  state: {},
+  setState(value) {
+    this.state = value;
+    this.setters.forEach(setter => setter(this.state));
+  },
+  setters: []
+};
+  
+// Bind the setState function to the store object so 
+// we don't lose context when calling it elsewhere
+store.setState = store.setState.bind(store);
+
+// this is the custom hook we'll call on components.
+export function useStore() {
+  const [ state, set ] = useState(store.state);
+  if (!store.setters.includes(set)) {
+    store.setters.push(set);
+  }
+
+  return [ state, store.setState ];
+}
+```
+
+这仅仅20行代码(忽略空行和注释),我们就能创建一个全局 *useState* hook，让我们来详细解释一下它吧。
+
+第七行, store对象中我们声明了一个setters:
+
+```js
+setters: []
+```
+
+这个数组将会存储所有 *useState* 中的返回函数。
+
+在第十八行，在我们自定义的 *useStore* 中，使用了 *useState* hook。并且把我们store.state作为初始值传入 *useState* 中。
+
+```js
+const [ state, set ] = useState(store.state)
+```
+
+在第二十行， 我们把 *set* 函数放入store的setter对象，防止在当前的组件中无法进行set。
+
+```js
+store.setters.push(set)
+```
+
+第二十三行，我们返回了两个state变量和setState函数，
+
+```js
+return [ state, store.setState ]
+```
+
+你可能发现了我们没有直接把 *useState* 函数的set函数直接暴露出来。我们只会把他存起来，当需要更新的时候统一调用他们。
+
+在第六行，在store的setState方法中，我们通过传入的value来更新state对象。
+
+```js
+this.state = value
+```
+
+第七行，我们给所有用到 *useStore* 的组件广播更新共享状态。
+
+```js
+this.setters.forEach(setter => setter(this.state))
+```
+
+以上就是奇迹诞生的最重要部分，对于每个使用了自定义hook的组件，我们执行setter回调函数时，都会触发所有组件状态的更新。
+
+### 使用我们的自定义hook
+
+和 *useState* 一样，*useStore*使用也很简便：
+
+```js
+import { store, useStore } from './hookstore';
+
+// setting the store initial state
+store.state = 0;
+
+function StatefulHello() {
+  // using the useStore hook
+  const [timesClicked, updateTimesClicked] = useStore();
+
+  return (
+    <div>
+      <h1>Hello, component!</h1>
+      <h2>The button inside this component was clicked {timesClicked} times</h2>
+      <button type="button" onClick={() => updateTimesClicked(timesClicked + 1)}>
+        Update
+      </button>
+    </div>
+  );
+}
+
+function AnotherComponent() {
+  // using the useStore hook here as well. The same state will be shared here.
+  const [ timesClicked ] = useStore();
+  return (
+    <div>
+      <h1>
+        Hello, this is a second component, with no relation to the one on the
+        top
+      </h1>
+      <h2>
+        Using the useStore hook, I know the user clicked on the button { timesClicked } times!
+      </h2>
+    </div>
+  );
+}
+```
+
+### 当组件卸载时取消订阅
+
+这个基础版本存在一些问题，当第二个组件卸载时，我们还是在 `store.setters` 注册着两个setter函数，并且当store中的state更新后，React将会抛出我们给未挂载的组件设置state的警告。
+
+我们需要在组件卸载的时候销毁setter中的函数。此时，我们可以使用： *useEffect*。
+
+这个hook在组件挂载和更新时会被调用，并且它返回了一个函数，这个函数在组件卸载时会被调用。在[官方文档了解useEffect](https://reactjs.org/docs/hooks-effect.html)。
+
+在我们这个例子中，我们只需要在卸载时触发，所以我们只关心它的返回函数。
+
+我们可以让 *useEffect*跳过updates。我们给第二个参数传递一个空数组，第二个空数组意味着我们不需要依赖任何props和state，所以，React只会在挂载和卸载时调用这个函数。
+
+如果在传入的函数中第一个返回值中无任何执行，那么挂载阶段也不会产生任何变化。
+
+上面这一堆可能让你感觉很混乱，别担心，直接看代码吧:
+
+```js
+export function useStore() {
+  const [ state, set ] = useState(store.state);
+  if (!store.setters.includes(set)) {
+    store.setters.push(set);
+  }
+  
+  useEffect(() => () => {
+    store.setters = store.setters.filter(setter => setter !== set)
+  }, [])
+
+  return [ state, store.setState ];
+}
+```
+
+第 7，8，9行实现了这一hook，传递了A函数并返回了函数B。B将会在组件卸载时触发。当组件卸载时，我们取消掉这个组件注册的订阅事件，这样就不会出现之前的问题了。
+
+### 警告
+
+这个版本只是用来实现整个基础功能，暴露整个store对象可不是一个好主意，我们把这个库都暴露出去了。最终版本可能更适合使用：我们通过工厂函数来创建带有命名空间的实例。可以使用reducer来完成状态更新，已经内部函数全部隐藏起来了。你可以在[github repo](https://github.com/jhonnymichel/react-hookstore/blob/master/src/index.js)查看完整代码。

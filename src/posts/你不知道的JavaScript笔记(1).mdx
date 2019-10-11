@@ -1,0 +1,387 @@
+---
+title: 你不知道的JavaScript笔记(1)
+date: 2019-01-15 21:43:34
+tags: JavaScript
+---
+
+# 你不知道的JavaScript笔记
+
+<!--阅读笔记，只记录自己还没掌握的东西-->
+
+### 引擎、编译器和作用域
+
+- 引擎负责从头到尾整个JavaScript的编译及执行过程
+- 编译器负责语法分析及代码生成
+- 作用域负责收集并维护所有声明的标识符组成的一系列查询，并实施一套非常严格的规则。
+
+### LHS和RHS
+
+引擎在执行过程中会执行查询，一种叫LHS查询，另一种叫做RHS查询。
+
+LHS查询意味着我要给我的某个值找一个变量来赋值，也就是查询到要赋值变量的地址。通常这个变量在等号左边，所以我们叫做LHS。
+
+RHS与LHS相反， 目的是查询到某个变量的实际值，此时我们知道变量的地址，需要拿到地址里的值。也是就赋值操作是等号右边的值，在运行过程中通过左边的标识符保存，当需要进行计算时，RHS查询到实际值进行计算。
+
+### 异常
+
+为什么区分LHS和RHS是一件非常重要的事情？
+
+因为在变量还没有声明的时候，这两种查询行为是不一样的
+
+```js
+function foo(a) {
+	console.log( a + b );
+  b = a;
+}
+
+foo(2);
+```
+
+第一次对b进行RHS查询时无法找到该变量，也就是说，这是一个“未声明”的变量，因为在整个作用域中都找不到他。引擎会抛出ReferenceError异常。
+
+相比之下，当引擎执行LHS查询时，如果没有找到目标变量，就会在全局作用域中创建一个具有该名称的变量，并返还给引擎。
+
+在ES5中，引入了严格模式，禁止了自动或者隐式创建全局变量，同时也会抛出ReferenceError异常。
+
+### JS中的变量提升
+
+```js
+a = 2;
+console.log(a); 
+// 2
+var a；
+---------------------------------------
+console.log(a)
+// undefined
+var a = 2;
+---------------------------------------
+foo()
+// TypeError
+bar()
+// RefrenceError
+
+var foo = function bar() {
+}
+---------------------------------------
+foo() // 1
+
+var foo;
+
+function foo() {
+  console.log(1)
+}
+
+foo = function () {
+	console.log(2)
+}
+```
+
+用var或者function声明的变量会被提升到最顶部，但是赋值语句还是停留在当前位置，这就是js里面的变量提升。
+
+函数声明的优先级最高。
+
+我们习惯将`var a = 2`看做一个声明，而JavaScript引擎则不会，它会将它看成两个语句`var a` 和 `a = 2`，第一阶段是编译阶段的任务，第二阶段是执行阶段的任务。
+
+### 关于this
+
+首先this函数既不指向函数自身也不指向函数的词法作用域。this实际上是在函数被调用时才会绑定，它的指向完全取决于函数在哪里被调用。
+
+#### 默认绑定
+
+调用函数时应用了this的默认绑定，this指向了全局对象。因为foo()是直接使用不带任何修饰函数引用进行调用的，因此只能默认绑定。当然，严格模式下，无法默认绑定到全局对象，所以会指向undefined。
+
+```js
+function foo() {
+	console.log(this.a)
+}
+
+var a = 2;
+
+foo() //2
+```
+
+#### 隐式绑定
+
+当函数执行的时候会考虑当前位置是否有上下文对象，以及是否被某个对象拥有或包围。
+
+```js
+function foo() {
+  console.log(this.a)
+}
+
+var obj = {
+  a: 2,
+  foo: foo
+};
+
+obj.foo(); //2
+
+var obj2 = {
+  a: 42,
+  foo: foo
+};
+
+var obj1 = {
+  a: 2,
+  obj2: obj2
+};
+
+obj1.obj2.foo(); //42
+```
+
+###### 隐式丢失
+
+作为回调函数传入别的函数中调用时，很容易发生隐式丢失。
+
+```js
+function foo() {
+  console.log(this.a)
+}
+
+function doFoo(fn) {
+  fn()
+}
+
+var obj = {
+  a: 2,
+  foo: foo
+};
+
+var a = 'ooops, global';
+doFoo(obj.foo) //ooops, global
+```
+
+#### 显式绑定
+
+强制绑定函数的this执行环境。
+
+```js
+function foo() {
+  console.log(this.a);
+}
+
+var obj = {
+  a : 2
+};
+
+foo.call(obj); //2
+```
+
+###### 1.硬绑定
+
+使用call、apply和bind绑定的函数无法再改变绑定的对象，这是一种强制绑定，我们称之为硬绑定。
+
+```js
+function foo(something) {
+  console.log(this.a, something);
+  return this.a + something;
+}
+
+var obj = {
+	a: 2
+}
+
+var bar = function() {
+  return foo.apply(obj, arguments);
+}
+
+var b = bar(3); // 2 3
+console.log(b); // 5
+
+//bind实现
+function bind(fn, obj) {
+  return function() {
+    fn.apply(obj, arguments);
+  }
+}
+
+var bbar = bind(foo, obj);
+var b2 = bbar(3); // 2 3
+console.log(b2) // 5
+```
+
+2. ###### API调用的"上下文"
+
+很多库提供了一个可选的参数，通常被称为context，作用和bind一样，用来指定执行环境的this指向。
+
+```js
+function foo(el) {
+  console.log(el, this.id);
+}
+
+var obj = {
+  id: "awesome"
+};
+
+[1, 2, 3].forEach(foo, obj);
+// 1 awesome 2 awesome 3 awesome
+```
+
+#### new绑定
+
+老生常谈的new到底干了什么呢:
+
+1. 创建一个全新的对象。
+2. 这个新对象会被执行[[prototype]]连接。
+3. 将this指向新创建的对象。
+4. 执行整个函数。
+5. 如果return返回类型不为object，那么返回刚创建的新对象。
+
+#### this优先级
+
+显然，根据常识，显式>隐式>默认， new>隐式>默认。那么new和显式绑定的优先级呢？
+
+```js
+function foo(something) {
+  this.a = something;
+}
+
+var obj1 = {};
+// 此时bar()的this已经绑定到了obj1上面
+var bar = foo.bind(obj1);
+bar(2);
+console.log(obj1.a); //2
+
+var baz = new bar(3);
+console.log(obj1.a); //2
+console.log(baz.a); //3
+```
+
+在使用new的时候，尽管当前函数已经被显式指定了this，但this指向会被强制改变，并且优先级最高。
+
+###### MDN的bind polyfill
+
+```js
+if (!Function.prototype.bind) (function(){
+  var ArrayPrototypeSlice = Array.prototype.slice;
+  Function.prototype.bind = function(otherThis) {
+    if (typeof this !== 'function') {
+      throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+    }
+
+    var baseArgs= ArrayPrototypeSlice .call(arguments, 1),
+        baseArgsLength = baseArgs.length,
+        fToBind = this,
+        fNOP    = function() {},
+        fBound  = function() {
+          baseArgs.length = baseArgsLength; // reset to default base arguments
+          baseArgs.push.apply(baseArgs, arguments);
+          // 直接调用bound函数时this是undefined，
+          // 如果bound后函数隐式添加上下文，此时this为object类型。
+          // 而使用new初始化时，新this指向fBound函数，继承于fNOP，可以区分在new操作时强制改变this指向
+          var newFlag = fNOP.prototype.isPrototypeOf(this);
+          return fToBind.apply(
+                 fNOP.prototype.isPrototypeOf(this) ? this : otherThis, baseArgs
+          );
+        };
+
+    // 因为可能会被new创建，所以要将原函数的prototype绑定到新函数的原型上，
+    // 但是不能直接赋值，否则修改fBound.prototype时会修改bind之前函数的prototype
+    if (this.prototype) {
+      // Function.prototype doesn't have a prototype property
+      fNOP.prototype = this.prototype; 
+    }
+    fBound.prototype = new fNOP();
+
+    return fBound;
+  };
+})(); 
+```
+
+有点复杂哈，这段代码会判断硬绑定函数是否被new调用，如果是的话就会使用新创建的this替换绑定的this。那么为什么要在new中使用硬绑定函数呢，主要目的是预先设置函数的一些参数，这样在使用new初始化时就可以只传入其余的参数。
+
+```js
+function foo(p1, p2) {
+	this.val = p1 + p2;
+}
+
+var bar = foo.bind(null, "p1");
+// 用不用new都可以实现柯里化，但是用new可以将组合初始化后的对象返回赋给新的对象。
+var baz = new bar("p2");
+
+baz.val; // p1p2
+```
+
+### 对象Object
+
+基本类型：string, number, null, undefined, boolean, symbol, object.
+
+内置对象：String, Number, Boolean, Object, Function, Array, Date, RegExp, Error.
+
+###### 字面量和对象的区别
+
+```js
+var str = "I am a string";
+typeof str; //"string"
+str instanceof String; // false
+
+var strObj = new String("I am a string");
+typeof str; // "object";
+strObj instanceof String; //true
+```
+
+###### 关于属性描述符
+
+```js
+var myObj = {
+  a: 2
+};
+
+Object.getOwnPropertyDescriptor(myObj, "a");
+{
+	value: 2,
+  writable: true,
+  enumerable: true,
+  configurable: true
+}
+```
+
+- writable决定属性值是否可以被修改
+- configurable决定属性描述符是否可以被修改
+- enumerable决定属性是否出现在for…in循环中
+- value就是属性的值
+
+###### 不变性
+
+```js
+var myObj = {};
+// 不可修改的常量属性
+Object.defineProperty(myObj, "FAVORITE_NUMBER", {
+  value: 42,
+  writable: false,
+  configurable: false
+});
+
+var myOjb1 = {
+  a: 2
+};
+// 阻止添加新的属性
+Object.preventExtensions(myOjb1);
+myObj1.b = 3;
+myObj1.b // undefined
+
+// 在preventExtensions基础上将所有已有属性标记为configurable: false
+Object.seal(myObj1);
+ 
+// 在seal基础上将所有属性writable属性改为false
+Object.freeze(myObj1)
+```
+
+###### [[get]] [[set]]
+
+```js
+var myObj = {
+  get a() {
+    return this._a_;
+  }
+  
+  set a(val) {
+    this._a_ = val * 2;
+  }
+}
+myObj.a = 3;
+myObj.a; // 6;
+```
+
+### 
+

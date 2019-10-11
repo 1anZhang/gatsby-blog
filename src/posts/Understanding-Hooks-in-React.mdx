@@ -1,0 +1,264 @@
+---
+title: 理解React中的hook（译）
+date: 2018-12-09 14:03:37
+tags: react hook
+---
+
+# 理解React中的hook（译）
+
+[原文地址](https://blog.bitsrc.io/understanding-hooks-in-react-a-deep-dive-d5d5dc88ecd9)
+
+React是一个非常强大的UI库。React团队一直以来致力于提高性能，改善用户体验，孜孜不倦添加新的特性来帮助开发者创建更棒的app。
+
+**Hooks**是一个仍然处在alpha阶段的特性，并且将会在16.7版本中正式推出。
+
+### React class组件存在的一些问题
+
+当前，在编写React组件时存在的问题并不多，让我们来总结一下常见的问题。
+
+**1)庞大的组件** 在一开始，组件一般都是比较简单的。随着开发迭代，功能添加，组件内部变得越来越庞大，越来越复杂。
+
+例如：我们通常会在 *componentDidMount* 中请求数据，注册事件监听，订阅某些事件。同时，还需要在 *componentWillUnmount* 中取消订阅。这一系列操作使得组件越来越难以维护。
+
+**2) functional组件无状态 **最简单的组件就是functional组件。现在最大的问题就是，当我们想使用一些React的特性，比如states，context，ref或是在生命周期函数中进行操作，我们不得不将functional组件转变为class组件。
+
+Hooks的出现让我们可以在functional组件中使用states以及其他一些特性，所以我们就不再需要创建一个class组件了。
+
+**3) JavaScript中让人难以理解的classes** 如果你还不清楚为什么JavaScript class如此之糟糕，建议你先了解一些this的运行原理以及原型的继承。
+
+人们不喜欢JavaScript中的this是因为它和别的语言中的this有着很大的不同，如果有人错误的理解了this，那么写出来的程序将会存在很多的bugs并且很难去debug。
+
+你可以阅读[Dan Abramov](https://medium.com/@dan_abramov)写的[**How to Use Classes and Sleep at Night**](https://medium.com/@dan_abramov/how-to-use-classes-and-sleep-at-night-9af8de78ccb4)。
+
+### 什么是Hooks呢?
+
+Hooks是一个能够让你在functional组件中使用state，context，ref等功能的新特性。Hooks提供了一系列函数，比如 *useState* 方法来使用state。
+
+我们先写一个简单的class组件，然后使用Hooks来对他进行重构。
+
+下面这个计数器组件有两个按钮，点击第一个按钮，数字会加1，点击第二个按钮，数字会减一。
+
+```js
+import React, { Component } from 'react'
+
+export default class Counter extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      counter: 0
+    }
+    this.handleCounter = this.handleCounter.bind(this);
+  }
+  handleCounter(value) {
+    this.setState({
+      counter: value
+    });
+  }
+  render() {
+    return (
+      <div>
+        <div>
+          <button onClick={() => this.handleCounter(this.state.counter + 1)}> + Increment</button>
+          <button onClick={() => this.handleCounter(this.state.counter - 1)}> - Decrement</button>
+        </div>
+        <div>
+          Current: {this.state.counter}
+        </div>
+      </div>
+    )
+  }
+}
+```
+
+现在我们使用useState Hook来重构:
+
+```js
+import React, { useState } from 'react';
+export default function counterHook() {
+  const [count, setCount] = useState(0);
+  return (
+    <div>
+      <div>
+        <button onClick={() => setCount(count + 1)}> + Increment</button>
+        <button onClick={() => setCount(count - 1)}> - Decrement</button>
+      </div>
+      <div>
+        Current: {count}
+      </div>
+    </div>
+  );
+}
+```
+
+**第3行:** **const [count, setCount] = useState(0)*** useState是一个可以让你在functional组件中使用state的Hook。这个方法接受一个参数作为state的初始值，在上面这个例子中，我们给他的默认值是0。这一操作就相当于我们在constructor中定义的state。当然，你也可以传递一个对象作为state的初始值。
+
+我们通过 *setCount* 函数来对state中的值进行操作。在第7行和第8行我们可以修改stat中的值。
+
+很明显，通过使用hook几乎减少了一半的代码。
+
+#### useState中的方括号
+
+这个方括号是对数组的结构。 *useState* 方法返回了一个数组，第一个元素是当前state中的值，第二个元素是用来改变state的方法。
+
+```js
+const [count, setCount] = useState(0);
+
+// e.g const [a, b] = [1, 2]
+// The value of a is 1
+// The value of b is 2
+// This is array destructuring
+```
+
+上面这个和下面的等价:
+
+```js
+const countVariables = useState(0); // return two items in an array
+const count = countVariables[0]; // first item from array
+const setCount = countVariables[1]; // second item from array
+```
+
+如果你需要使用多个state，那就多次调用 useState。每一个实例都是独立的，相互之间无影响。
+
+```js
+const [count, setCount] = useState(0);
+const [todos, setTodos] = useState(['Learn Hooks', 'Implement hooks']);
+const [cart, setCart] = useState({id: 'xx22', name: 'iphone 8', quantity: 1}); 
+```
+
+#### useEffect Hook
+
+像它的名字一样，这个hook是用来处理副作用的。在React中，请求数据。订阅事件监听，更新DOM，整合第三方库都属于副作用。
+
+这个API会在`componentDidMount` 和 `componentDidUpdate`时被调用。
+
+我们继续给之前的计数器添加更多功能。让它能根据数值变化修改页面标题。
+
+```js
+import React, { Component } from 'react'
+
+export default class Counter extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      counter: 0
+    }
+    this.handleIncrement = this.handleCounter.bind(this);
+  }
+  componentDidMount() {
+    document.title = "Count is " + this.state.counter;
+  }
+  componentDidUpdate() {
+    document.title = "Count is " + this.state.counter;
+  }
+  handleCounter(value) {
+    this.setState({
+      counter: value
+    });
+  }
+  render() {
+    return (
+      <div>
+        <div>
+          <button onClick={() => this.handleCounter(this.state.counter + 1)}> + Increment</button>
+          <button onClick={() => this.handleCounter(this.state.counter - 1)}> - Decrement</button>
+        </div>
+        <div>
+          Current: {this.state.counter}
+        </div>
+      </div>
+    )
+  }
+}
+```
+
+现在使用useEffect来重构它。
+
+```js
+import React, { useState, useEffect } from 'react';
+export default function counterHook() {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    document.title = "Count is " + count;
+  });
+
+  return (
+    <div>
+      <div>
+        <button onClick={() => setCount(count + 1)}> + Increment</button>
+        <button onClick={() => setCount(count - 1)}> - Decrement</button>
+      </div>
+      <div>
+        Current: {count}
+      </div>
+    </div>
+  );
+}
+```
+
+*useEffect* hook聚合了 *componentDidMount* 和 *componentDidUpdate* 的功能。它接收一个函数作为参数并且无返回值。
+
+*useEffect* 需要写在组件内部，这样才能使用state中的变量并且可以存在于组件的作用域内。
+
+上面这个例子是一个简单的DOM操作，还有很多复杂的逻辑可以用hook来进行处理。
+
+如果你需要使用 Highcharts 库，那么你就需要下面这段代码来更新你的图表。
+
+```js
+componentDidMount() {
+ if (this.props.modules) {
+            this.props.modules.forEach(function (module) {
+                module(Highcharts);
+            });
+        }
+        // Set container which the chart should render to.
+        this.chart = new Highcharts[this.props.type || "Chart"](
+            this.props.container, 
+            this.props.options
+        );
+}
+```
+
+有时候组件在卸载的时候我们需要清除相关订阅，事件监听来防止内存泄漏。在React组件中，我们通常是在 componentWillUnmount来处理。
+
+我们为组件添加订阅事件并在卸载时清除它。
+
+```js
+componentDidMount() {
+  this.chart = createAndSetupChartInDOM(this.props.chartsValue);
+}
+
+componentDidUpdate(prevProps) {
+  this.chart.destroy(prevProps.chartsValue);
+  this.chart = createAndSetupChartInDOM(this.props.chartsValue);
+}
+
+componentWillUnmount() {
+  this.chart.destroy(this.props.chartsValue);
+}
+```
+
+使用hook进行重构：
+
+```js
+useEffect(() => {
+  chart = createAndSetupChartInDOM(props.chartsValue);
+  return function clearChart() {
+    this.chart.destroy(props.chartsValue);
+  }
+});
+```
+
+*useEffect*里面有一个返回的函数，这个返回函数就会在组件卸载时被调用。看起来真是太酷了！
+
+### 其他的hooks
+
+React同时还提供了很多的hooks，比如 *useContext* 来处理context，*useRef* 来使用 ref ，*useReducer* 和 Redux中的 Reducer 非常相似，我们可以 dispatch actions 来改变 state。如果想要进一步了解，可以查阅相关[文档](https://reactjs.org/docs/hooks-reference.html)。
+
+当然，你也可以创建自定义的hook。
+
+#### 优点
+
+- **代码复用**
+  在 hooks 中, 我们只需要传递函数以及返回函数。也就意味着我们可以提取更多独立的可复用的函数，这些函数可以被多次重用，大大减少了代码量。
+- **短小精炼的组件** 在之前的例子中，我们很直观的了解了使用hooks几乎可以减少一半的代码量。
+  在class组件中，我们需要`this.state.someValue` 来获取变量，而在hooks中只需要`someValue`。

@@ -1,0 +1,316 @@
+---
+title: Animating complex SVG in React（译）
+date: 2018-12-12 11:00:23
+tags: SVG animate
+---
+
+# React中复杂SVG动画（译）
+
+[原文地址](https://divdev.io/animating-SVG/)
+
+## 在React中使用SVG动画
+
+关于在React中使用SVG，目前我的水平就是把svg作为img标签的src引入，当做图片来展示。
+
+```js
+...
+import logo from './logo.svg'
+
+function App() {
+  return (
+		  <img src={logo} alt="react logo">
+     );
+}
+```
+
+在这篇文章中，我主要想介绍一下关于在React中使用`styled-components`对SVG进行复杂的动画操作。本文的全部代码会在文章的最后，以一个内嵌`Codesandbox`展示。(注：codesandbox是一个在线代码编辑工具)
+
+在下面的例子中，我们可以看到，首先我们必须通过 `styled-components` 来声明一个svg组件，然后我们才能使用与SVG相关的特性，并且，我们只能一个一个元素去画。
+
+```js
+import styled from "styled-components";
+
+const StyledCircle = styled.svg`
+  fill: red;
+`;
+
+const circle = (
+  <StyledCircle height="100" width="100">
+    <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
+  </StyledCircle>
+);
+
+function App() {
+  return <div className="App">{circle}</div>;
+}
+```
+
+## 把SVG作为React组件引入
+
+在最新版的React中，我们可以通过`styled`直接把SVG作为一个组件引入项目：
+
+```js
+import { ReactComponent as ImportedComponent } from "./logo.svg";
+
+const StyledSVG = styled(ImportedComponent)`
+  display: block;
+  margin: auto;
+  width: 25em;
+  height: 25em;
+`;
+
+function App() {
+  return (
+    <div className="App">
+      <StyledSVG />
+    </div>
+  );
+}
+```
+
+现在，我们不再需要手动编写SVG代码了，我们直接把SVG作为组件引入后，可以给它添加类名，并且使用动画就和使用 css 的 transition 一样简单。当然，SVG动画最有趣的地方在于每个单独的路径，图形和文字都可以单独设置动画。
+
+让我们来重新创建一个React的logo动画吧，首先，使用`create-react-app`创建一个新的项目，然后添加`styled-components`，最后，把SVG图片作为组件引入。
+
+## 准备工作
+
+在这篇教程中，我们使用了 `create-react-app`，请确保你使用了2.0以上版本。
+
+```js
+npm install -g create-react-app
+create-react-app animating-svg
+cd animating-svg
+npm start
+```
+
+## 使用styled-component来定义SVG动画
+
+在 `App.js`文件中引入`styled-components`，并且引入SVG。
+
+```js
+import { ReactComponent as ReactLogo } from './logo.svg'
+import styled from 'styled-components'
+```
+
+通过`styled` 我们可以给SVG组件添加CSS样式。
+
+```js
+import React, { Component } from 'react';
+import { ReactComponent as ReactLogo } from './logo.svg'
+import styled from 'styled-components'
+
+const StyledLogo = styled(ReactLogo)`
+  height:25rem;
+  width:25rem;
+  display:block;
+  margin:auto;
+`
+```
+
+把自带的`img`logo删了，我们用我们的`StyledLogo`来代替它。
+
+```js
+...
+import styled from 'styled-components'
+
+const StyledLogo = styled(ReactLogo)`
+height:25rem;
+width:25rem;
+display:block;
+margin:auto;
+`
+
+class App extends Component {
+  render() {
+    return (
+      <StyledLogo />
+    );
+  }
+}
+
+export default App;
+```
+
+万事俱备，就差旋转动画了。我们使用`styled-components`来定义一个旋转动画：
+
+```js
+...
+
+import styled, { keyframes } from 'styled-components'
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const StyledLogo = styled(ReactLogo)`
+animation: ${rotate} infinite 20s linear;
+height:25rem;
+width:25rem;
+display:block;
+margin:auto;
+`
+
+class App extends Component {
+  render() {
+    return (
+      <StyledLogo />
+    );
+  }
+}
+
+export default App;
+```
+
+我们自定义的SVG动画和原来文件的一样了，但是你可能会有一些疑问：
+
+> 我们为什么要引入SVG组件呢？这看起来真的很麻烦
+
+答案很简单，如果你很喜欢`styled-components` 并且喜欢动画，通过这种方式来定义动画是非常方便的。并且，这样我们有了更大的空间以及更高的灵活性来调整整个动画，下面你就会看到它的强大之处。
+
+## 给SVG元素设置单独的动画
+
+不得不说，官方自带的这个SVG有两个独立的元素，可以单独定义动画，真是太幸运了，我们给它们添加类名，这样就能直接通过类名操作了。
+
+```xml
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 841.9 595.3">
+    <g fill="#61DAFB">
+		<path class='lines'  
+		d="M666.3 296.5c0-32.5-40.7-63.3-103.1-82.4 14.4-63.6 8-114.2-20.2-130.4-6.5-3.8-14.1-5.6-22.4-5.6v22.3c4.6 0 8.3.9 11.4 2.6 13.6 7.8 19.5 37.5 14.9 75.7-1.1 9.4-2.9 19.3-5.1 
+
+		... see the rest of svg code in logo.svg in your react project
+
+		"/>
+        <circle class='circle' cx="420.9" cy="296.5" r="45.7"/>
+        <path d="M520.5 78.1z"/>
+    </g>
+</svg>
+```
+
+现在我们添加两个新的动画框架，并且在SVG中添加定义好的动画：
+
+```js
+...
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const fade = keyframes`
+0% {
+fill:#61DAFB;
+}
+50% {
+ fill:#999;
+}
+100%{
+  fill:#61DAFB;
+}
+`;
+
+const pulse = keyframes`
+0% {
+  transform: scale(0);
+  opacity: 1;
+  transform-origin: center;
+}
+100% {
+  transform: scale(4.5);
+  opacity: 0;
+  transform-origin: center;
+}
+`;
+
+const StyledLogo = styled(ReactLogo)`
+animation: ${rotate} infinite 20s linear;
+height:25rem;
+width:25rem;
+display:block;
+margin:auto;
+.lines{
+  animation: ${fade} infinite 8s linear;
+		}
+
+.circle{
+  animation: ${pulse} infinite 4s linear;
+  &:hover{
+    animation-play-state: paused;
+    cursor:pointer;
+}
+}
+`
+```
+
+并且，我们给动画添加了Hover事件，当鼠标放在上面时，动画停止。通过这种方式，我们给SVG定义了多个动画，并且他们之间完全不受影响。
+
+![img](https://divdev.io/styled-svg-e775ffd86b37ef5d3bf07e3a204aaf71.gif)
+
+## 总结
+
+在这篇教程中，我们介绍了引入SVG的新方式，通过`styled-components` 来定义`css-transitions`和`animation`,并且给SVG中每个独立元素定义单独的动画。
+
+当然，在使用`styled-components`的时候，并不推荐使用class来定义类名，我们同样可以通过`styled.path` 或 `styled.circle`来定义SVG的元素，就像下面这样：
+
+```js
+import styled, { keyframes } from "styled-components";
+
+const pulse = keyframes`
+0% {
+  fill:#10aded;
+  stroke-width:10px
+}
+50% {
+  fill:#bada55;
+  stroke-width:2px
+}
+100%{
+  fill:#10aded;
+  stroke-width:10px
+}
+`;
+const StyledCircle = styled.svg`
+  height: 25rem;
+  width: 25rem;
+  display: block;
+  margin: auto;
+`;
+const StyledInnerCircle = styled.circle`
+  animation: ${pulse} infinite 4s linear;
+  fill: blue;
+`;
+
+const circle = (
+  <StyledCircle height="100" width="100">
+    <StyledInnerCircle cx="50" cy="50" r="40" stroke="black" stroke-width="3" />
+  </StyledCircle>
+);
+
+class App extends React.Component {
+  render() {
+    return <div>{circle}</div>;
+  }
+}
+```
+
+![img](https://divdev.io/circle-animation-b20325c3837274ef6f21aa8cb308d002.gif)
+
+不过这样让代码看起来非常冗长，并且需要把代码写在组件里。
+
+此外，我还添加了可配置的动画，通过接受props并返回 `styled-components`动画框架。这属于一种高阶组件的形式来定义CSS属性。当然，这属于另外一个复杂的话题了，就不展开这一话题了，下面是代码的实现，它放在CodeSandbox上面了。
+
+<iframe src="https://codesandbox.io/embed/v303jqkyk7" sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin" style="box-sizing: inherit; margin: 0px 0px 1.666rem; padding: 0px; color: rgba(0, 0, 0, 0.8); font-family: Georgia, serif; font-size: 18px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; width: 674.734px; height: 700px; border: 0px; border-radius: 4px; overflow: hidden;"></iframe>
+
+
+
+感谢您的阅读，非常建议您也尝试使用`styled-components`在react中处理样式，我已经用了很久了，并且觉得它真的很棒！
+

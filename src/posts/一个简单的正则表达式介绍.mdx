@@ -1,0 +1,228 @@
+---
+title: 一个简单的正则表达式介绍
+date: 2017-12-11 17:05:30
+tags: regex
+---
+
+### 1 正则表达式语法
+
+**修饰符**
+
+- i —— 对大小写不敏感
+- g —— 查找所有匹配项，查找到第一个后不会停止
+- m —— 允许多行匹配
+- y —— 开启粘连匹配
+- u —— 允许使用Unicode点转义符(\u{...})
+
+**精确匹配**
+
+`/test/`精确匹配字符，没什么用
+
+**匹配字符集**
+
+`/[abc]/`  —— 匹配方框里任意一个
+
+`/[^abc]/` —— 匹配非方框里的任意字符
+
+`/[a-z]/` —— 匹配a-z的任意字符
+
+**转义**
+
+`$ ^ \ []-` —— 之类的字符使用`\`转义后匹配
+
+**起止符**
+
+`/$test/ /test^/ /$test^/` —— 从开头或者结尾匹配，两个都有则匹配整个字符串
+
+**重复出现**
+
+- `/t?est/` —— 匹配0-1个t
+- `/t+est/` —— 匹配1-∞个t
+- `/t*est/` —— 匹配0-∞个t
+- `/t{4}est/` —— 匹配4个t
+- `/t{4,10}est/` —— 匹配4-10个t
+- `/t{4,}est/` —— 匹配4-∞个t
+
+**预定义字符集**
+
+| 预定义元字符  | 匹配的字符集                                |
+| :------------ | ------------------------------------------- |
+| \t            | 水平制表符                                  |
+| \b            | 空格                                        |
+| \r            | 回车                                        |
+| \f            | 换页                                        |
+| \n            | 换行                                        |
+| \cA:\cZ       | 控制字符                                    |
+| \u0000:\uFFFF | 十六进制Unicode码                           |
+| \x00:\xFF     | 十六进制ASCII码                             |
+| .             | 除换行符(\n \r \u2028 \u2029\) 之外任意字符 |
+| \d            | 任意十进制数字                              |
+| \D            | 任意非十进制数字                            |
+| \w            | 任意字母，数字和下划线                      |
+| \W            | 任意非字母，数字和下划线                    |
+| \s            | 任意空白字符（空格，制表符，换页符）        |
+| \S            | 任意非空白字符                              |
+| \b            | 匹配单词边界                                |
+| \B            | 匹配单词内部                                |
+
+**分组**
+
+`/(ab)+/` —— 匹配一个或多个连续的ab，同时捕获括号内容
+
+**或操作符**
+
+`/(ab)+|(cd)+/` —— 匹配一个或多个ab或cd
+
+**反向引用**
+
+`/<(\w+)>(.+)<\/\1>/` —— 使用`\1`可以匹配第一次匹配到的内容，这个可以用来匹配XML标签。
+
+### 2 编译正则表达式
+
+**创建正则表达式的两种方法**
+
+1. `const re1 = /test/i`   字面量
+2. `const re2 = new RegExp("test", "i")` 构造函数，可以在运行时创建正则。
+
+一个在运行时创建正则表达式的栗子
+
+```html
+<div class="samurai ninja"></div>
+<div class="ninja samurai"></div>
+<div></div>
+<span class="samurai ninja ronin"></span>
+<script>
+  // 查找到具有指定类名的元素
+  function findClassInElements(className, type) {
+    const elems = document.getElementsByTagName(type || "*")
+    // \\在字面量里使用一个\即可，但是这种拼接字符串需要\\s来代表\s
+    const regex = new Regex("(^|\\s)" + className + "(\\s|$)")
+    const results = []
+    for (let i = 0, length = elems.length; i < length; i++) {
+      if (regex.test(elems[i].className)) {
+        results.push(elems[i])
+      }
+    }
+    return results
+  }
+  
+  findClassInElements("ninja", "div").length === 2
+  findClassInElements("ninja", "span").length === 1
+  findClassInElements("ninja").length === 3
+</script>
+```
+
+### 3 捕获匹配的片段
+
+使用`()`可以捕获到匹配的片段，有非常大的用处。
+
+#### 3.1 简单捕获
+
+```html
+<div id="square" style="transform:translateY(15px)"></div>
+<script>
+  function getTranslateY(elem) {
+    const transformValue = elem.style.transform
+    if (transformValue) {
+      const match = transformValue.match(/translateY\(([^\)]+)\)/)
+      return match ? match[1] : ""
+    }
+    return ""
+  }
+  
+  const square = document.getElementById("square")
+  
+  getTranslateY(square) === "15px"
+</script>
+```
+
+match方法匹配结果通过第一个索引返回，然后每次捕获结果索引递增。第0个匹配的是整个字符串translateY(15px)，第一个位置是15px。
+
+#### 3.2 全局表达式匹配
+
+```js
+const html = "<div class='test'><b>Hello</b> <i>world!</i></div>"
+// 局部匹配返回完整结果和捕获结果
+const results = html.match(/<(\/?)(\w+)([^>]*?)>/)
+result[0] === "<div class='test'>"
+result[1] === ""
+result[2] === "div"
+result[3] === "class='test'"
+
+// 全局匹配返回的总是完整匹配结果
+const all = html.match(/<(\/?)(\w+)([^>]*?)>/g)
+all[0] ==="<div class='test'>"
+all[1] ==="<b>"
+all[2] ==="</b>"
+all[3] ==="<i>"
+all[4] ==="</i>"
+all[5] ==="</div>"
+
+// 如果想要完整的所有结果，使用exec()
+const tag = /<(\/?)(\w+)([^>]*?)>/g
+let match, num = 0
+let res = []
+while((match = tag.exec(html)) !== null) {
+  // match.length === 4
+  num++
+  res.push(match)
+}
+num === 6
+```
+
+#### 3.3 未捕获的分组
+
+有时候，我们使用 `()`不是为了捕获分组，那么此时捕获它们会影响到我们拿到的结果。在括号前面添加 `?:`可以阻止这个括号内的内容捕获`。
+
+```js
+const pattern = /((?:ninja-)+)sword/
+const ninjas = "ninja-ninja-sword".match(pattern)
+ninjas.length === 2
+ninjas[1] === "ninja-ninja-"
+```
+
+### 4 利用函数进行替换
+
+#### 4.1 将横线-连接替换成驼峰式
+
+```js
+// 第一个参数是匹配到的字符串，第二个参数是捕获的字符
+function upper(all, letter) { return letter.toUpperCase() }
+let paragraph = "border-bottom-width"
+let newParagraph = paragraph.replace(/-(\w)/g, upper)
+newParagraph === "borderBottomWidth"
+```
+
+#### 4.2 一种查询字符串压缩技术
+
+```js
+function compress(source) {
+  const keys = {}
+  source.replace(
+  	/([^=&]+)=([^&]*)/g,
+    function(full, key, value) {
+      keys[key] = (keys[key] ? keys[key] + "," : "") + value
+      return ""
+    }
+  )
+  const result = []
+  for (let key in keys) {
+    result.push(key + "=" + keys[key])
+  }
+  return result.join("&")
+}
+
+compress("foo=1&foo=2&blah=a&blah=b&foo=3") === "foo=1,2,3&blah=a,b"
+```
+
+### 附录
+
+[一个练习regex的网站，还会给出表达式的分析](https://regex101.com/)
+
+深入书籍推荐：
+
+《Mastering Regular Expressions》——Jeffrey
+
+《Introducing Regular Expressions》—— Michael
+
+《Regular Expressions Cookbook》—— Jan Goyvaerts

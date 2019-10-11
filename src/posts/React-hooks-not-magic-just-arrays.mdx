@@ -1,0 +1,197 @@
+---
+title: React hooks not magic, just arrays(译)
+date: 2018-12-09 15:14:45
+tags: react hook
+---
+
+# React hooks: 揭开其中的奥秘（译）
+
+[原文地址](https://medium.com/@ryardley/react-hooks-not-magic-just-arrays-cd4f1857236e)
+
+### 探究hooks工作原理
+
+#### hooks 使用规则
+
+React团队规定了使用hook的两个主要规则：
+
+- **不要在循环，条件判断或内嵌函数中使用Hooks**
+- **只在React函数中调用Hooks**
+
+首先，为了能够得到组件内部作用域，你肯定要在组件内部调用Hooks。
+
+其次，第一个条件可能让你有些困惑，那么我们今天就来探索一下为什么有这样的规定
+
+#### 数组和hooks状态管理
+
+**请注意，这只是一个对于hook实现方式的猜测，这并不是hooks内部的实现，你也可以有自己的思考。**
+
+####  `useState()`应该如何实现呢 ?
+
+让我们通过一个简单的使用hooks的例子来作为开始:
+
+```js
+function RenderFunctionComponent() {
+  const [firstName, setFirstName] = useState("Rudi");
+  const [lastName, setLastName] = useState("Yardley");
+
+  return (
+    <Button onClick={() => setFirstName("Fred")}>Fred</Button>
+  );
+}
+```
+
+通过使用hooks，你可以使用hooks函数返回的setter方法来控制state。
+
+### 所以React都干了一些什么呢?
+
+让我们来对React的内部工作机制做一些说明，下面的例子可以在渲染特定组件的环境中执行。也就是说数据存储在组件渲染函数的外面那一层。这个state不和其他组件共享，但是state维护在这个组件随后每次渲染都能够获取到的作用域内。
+
+#### 1) 初始化
+
+创建了两个空数组: `setters` 和 `state`
+
+指针指向0：
+
+
+
+![img](https://cdn-images-1.medium.com/max/1600/1*LAZDuAEm7nbcx0vWVKJJ2w.png)
+
+#### 2) 首次渲染
+
+第一次执行组件函数.
+
+当第一次执行时，每一次`useState()`调用，往两个数组中分别添加对应的元素。
+
+![img](https://cdn-images-1.medium.com/max/1600/1*8TpWnrL-Jqh7PymLWKXbWg.png)
+
+#### 3) 随后的渲染 
+
+之后的每次渲染指针都会重置，我们可以依次读取数组中的值。
+
+![img](https://cdn-images-1.medium.com/max/1600/1*qtwvPWj-K3PkLQ6SzE2u8w.png)
+
+#### 4) 事件处理
+
+每一个setter都有一个对应的引用，所以当调用`setter`函数时，他就会改变state中相对应的那个元素。
+
+![img](https://cdn-images-1.medium.com/max/1600/1*3L8YJnn5eV5ev1FuN6rKSQ.png)
+
+下面是代码实现:
+
+```js
+
+let state = [];
+let setters = [];
+let firstRun = true;
+let cursor = 0;
+
+function createSetter(cursor) {
+  return function setterWithCursor(newVal) {
+    state[cursor] = newVal;
+  };
+}
+
+// useState的简化实现
+export function useState(initVal) {
+  if (firstRun) {
+    state.push(initVal);
+    setters.push(createSetter(cursor));
+    firstRun = false;
+  }
+
+  const setter = setters[cursor];
+  const value = state[cursor];
+
+  cursor++;
+  return [value, setter];
+}
+
+// 使用hooks的代码
+function RenderFunctionComponent() {
+  const [firstName, setFirstName] = useState("Rudi"); // cursor: 0
+  const [lastName, setLastName] = useState("Yardley"); // cursor: 1
+
+  return (
+    <div>
+      <Button onClick={() => setFirstName("Richard")}>Richard</Button>
+      <Button onClick={() => setFirstName("Fred")}>Fred</Button>
+    </div>
+  );
+}
+
+// 模拟React渲染循环
+function MyComponent() {
+  cursor = 0; // resetting the cursor
+  return <RenderFunctionComponent />; // render
+}
+
+console.log(state); // Pre-render: []
+MyComponent();
+console.log(state); // First-render: ['Rudi', 'Yardley']
+MyComponent();
+console.log(state); // Subsequent-render: ['Rudi', 'Yardley']
+
+// 点击'Fred'按钮
+
+console.log(state); // After-click: ['Fred', 'Yardley']
+```
+
+### 为什么顺序很重要
+
+如果我们改变了hook的渲染循环顺序，会发生什么呢？
+
+让我们来做一些违反规则的事：
+
+```js
+
+let firstRender = true;
+
+function RenderFunctionComponent() {
+  let initName;
+  
+  if(firstRender){
+    [initName] = useState("Rudi");
+    firstRender = false;
+  }
+  const [firstName, setFirstName] = useState(initName);
+  const [lastName, setLastName] = useState("Yardley");
+
+  return (
+    <Button onClick={() => setFirstName("Fred")}>Fred</Button>
+  );
+}
+```
+
+这将破坏规则!
+
+我们在条件判断中使用了`useState`，让我们来看看发生了什么吧。
+
+#### Bad Component First Render
+
+![img](https://cdn-images-1.medium.com/max/1600/1*C4IA_Y7v6eoptZTBspRszQ.png)
+
+错误的使用方式将会在下一次渲染中体现出来。
+
+在此时，我们的`firstName` 和 `lastName` 所对应的值都是正确的，但是我们看看接下来的第二次渲染
+
+#### 第二次渲染
+
+
+
+![img](https://cdn-images-1.medium.com/max/1600/1*aK7jIm6oOeHJqgWnNXt8Ig.png)
+
+现在 `firstName` 和 `lastName` 都被设置成了`“Rudi”` ，此时state已经是不可控的了。这会产生明显的bug，这也就是为什么使用hooks有以上那些规定了。
+
+#### hooks操作就是对两个数组的操作，所以你不能违反使用规则
+
+现在你知道为什么不能再条件判断和循环中使用hooks了。因为我们是通过数组的指针来获取响应的元素的。如果你改变了顺序，那么你可能就获取不到对应的数据了，接下来引发一系列不可预测的bug。
+
+所以hooks其中的奥秘就是通过数组以及连续的指针来管理状态，如果你不希望出bug，那就不要违反规则。
+
+### 结论
+
+希望以上的内容能够清楚的解释hook内部的工作原理，也能够让你在使用hooks更加注意顺序的问题。
+
+Hooks 是一个React组件中一个非常棒的特性。这也就是为什么人们对这个新特性都非常兴奋。当然了，通过对hooks模型的剖析，你应该注意遵守使用规则。
+
+接下来我希望能够剖析`useEffects`并把它和React组件的生命周期函数进行比较。
