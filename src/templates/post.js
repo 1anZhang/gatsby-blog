@@ -4,6 +4,7 @@ import { MDXRenderer } from 'gatsby-plugin-mdx';
 import {MDXProvider} from '@mdx-js/react';
 import Layout from '../components/layout';
 import CodeBlock from '../components/CodeBlock';
+import PrevNext from '../components/PrevNext'
 
 const components = {
   pre: props => <div {...props} />,
@@ -19,6 +20,7 @@ export default ({
       <MDXProvider components={components}>
         <MDXRenderer>{postNode.body}</MDXRenderer>
       </MDXProvider>
+      <PrevNext prev={prev} next={next} />
     </Layout>
   );
 };

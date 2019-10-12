@@ -38,7 +38,7 @@ Hooks是一个能够让你在functional组件中使用state，context，ref等�
 
 下面这个计数器组件有两个按钮，点击第一个按钮，数字会加1，点击第二个按钮，数字会减一。
 
-```js
+```jsx
 import React, { Component } from 'react'
 
 export default class Counter extends Component {
@@ -72,7 +72,7 @@ export default class Counter extends Component {
 
 现在我们使用useState Hook来重构:
 
-```js
+```jsx
 import React, { useState } from 'react';
 export default function counterHook() {
   const [count, setCount] = useState(0);
@@ -100,7 +100,7 @@ export default function counterHook() {
 
 这个方括号是对数组的结构。 *useState* 方法返回了一个数组，第一个元素是当前state中的值，第二个元素是用来改变state的方法。
 
-```js
+```jsx
 const [count, setCount] = useState(0);
 
 // e.g const [a, b] = [1, 2]
@@ -111,7 +111,7 @@ const [count, setCount] = useState(0);
 
 上面这个和下面的等价:
 
-```js
+```jsx
 const countVariables = useState(0); // return two items in an array
 const count = countVariables[0]; // first item from array
 const setCount = countVariables[1]; // second item from array
@@ -119,7 +119,7 @@ const setCount = countVariables[1]; // second item from array
 
 如果你需要使用多个state，那就多次调用 useState。每一个实例都是独立的，相互之间无影响。
 
-```js
+```jsx
 const [count, setCount] = useState(0);
 const [todos, setTodos] = useState(['Learn Hooks', 'Implement hooks']);
 const [cart, setCart] = useState({id: 'xx22', name: 'iphone 8', quantity: 1}); 
@@ -133,7 +133,7 @@ const [cart, setCart] = useState({id: 'xx22', name: 'iphone 8', quantity: 1});
 
 我们继续给之前的计数器添加更多功能。让它能根据数值变化修改页面标题。
 
-```js
+```jsx
 import React, { Component } from 'react'
 
 export default class Counter extends Component {
@@ -173,7 +173,7 @@ export default class Counter extends Component {
 
 现在使用useEffect来重构它。
 
-```js
+```jsx
 import React, { useState, useEffect } from 'react';
 export default function counterHook() {
   const [count, setCount] = useState(0);
@@ -203,7 +203,7 @@ export default function counterHook() {
 
 如果你需要使用 Highcharts 库，那么你就需要下面这段代码来更新你的图表。
 
-```js
+```jsx
 componentDidMount() {
  if (this.props.modules) {
             this.props.modules.forEach(function (module) {
@@ -222,7 +222,7 @@ componentDidMount() {
 
 我们为组件添加订阅事件并在卸载时清除它。
 
-```js
+```jsx
 componentDidMount() {
   this.chart = createAndSetupChartInDOM(this.props.chartsValue);
 }
@@ -239,7 +239,7 @@ componentWillUnmount() {
 
 使用hook进行重构：
 
-```js
+```jsx
 useEffect(() => {
   chart = createAndSetupChartInDOM(props.chartsValue);
   return function clearChart() {

@@ -1,7 +1,7 @@
 // Converted automatically using ./tools/themeFromVsCode
 var theme = {
   plain: {
-    color: "rgb(224, 108, 117)",
+    color: "#fff",
     backgroundColor: "rgb(40, 44, 52)"
   },
   styles: [{
@@ -48,7 +48,7 @@ var theme = {
     // Fix tag color
     types: ["tag"],
     style: {
-      color: "rgb(78, 201, 176)"
+      color: "rgb(215, 186, 125)"
     }
   }, {
     // Fix tag color for HTML
@@ -60,7 +60,7 @@ var theme = {
   }, {
     types: ["punctuation", "operator"],
     style: {
-      color: "rgb(86, 182, 194)"
+      color: "#5FA8AA"
     }
   }, {
     // Fix punctuation color for HTML
