@@ -1,6 +1,6 @@
 import { Link, graphql, useStaticQuery } from 'gatsby';
 import PropTypes from 'prop-types';
-import React, { useEffects } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import logoImg from '../images/duck.svg';

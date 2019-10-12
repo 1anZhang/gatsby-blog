@@ -5,7 +5,6 @@ import theme from '../utils/theme';
 
 export default ({ children, className }) => {
   const language = className.replace(/language-/, '');
-  console.log('123213', className);
   return (
     <Highlight {...defaultProps} code={children} language={language} theme={theme}>
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
