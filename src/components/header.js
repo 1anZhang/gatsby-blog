@@ -3,10 +3,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
 
-import logoImg from '../images/duck.svg';
+import logoIcon from '../images/icons/duck.svg';
+import homeIcon from '../images/icons/home.svg';
+import blogIcon from '../images/icons/blog.svg';
+import giftIcon from '../images/icons/gift.svg';
+import aboutIcon from '../images/icons/about.svg';
+
 
 const HeaderContainer = styled.header`
-  background: ${prop => prop.backgroundColor};
   margin-bottom: 24px;
 `;
 
@@ -14,7 +18,6 @@ const Content = styled.div`
   display: flex;
   align-items: center;
   margin: 0 auto;
-  max-width: 960px;
   padding: 12px 36px;
 `;
 
@@ -47,8 +50,27 @@ const NavigatorContainer = styled.div`
 `;
 
 const NaviGatorItem = styled(Link)`
+  display: flex;
+  align-items: center;
   margin-left: 16px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.8);
+  transition: background 0.3s ease-in-out;
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
 `;
+
+const NaviGatorItemLogo = styled.img`
+  width: 16px;
+  height: 16px;
+  margin: 0 6px 0 0;
+  line-height: 32px;
+`;
+
 
 const Header = ({ siteTitle }) => {
   const { site } = useStaticQuery(
@@ -67,14 +89,14 @@ const Header = ({ siteTitle }) => {
     <HeaderContainer backgroundColor={site.siteMetadata.theme_color}>
       <Content>
         <LinkHome to="/">
-          <Logo src={logoImg} />
+          <Logo src={logoIcon} />
           <Title>{siteTitle}</Title>
         </LinkHome>
         <NavigatorContainer>
-          <NaviGatorItem to="/">主页</NaviGatorItem>
-          <NaviGatorItem to="/blog">博客</NaviGatorItem>
-          <NaviGatorItem to="/treasure">百宝箱</NaviGatorItem>
-          <NaviGatorItem to="/about">关于</NaviGatorItem>
+          <NaviGatorItem to="/"><NaviGatorItemLogo src={homeIcon} />首页</NaviGatorItem>
+          <NaviGatorItem to="/blog"><NaviGatorItemLogo src={blogIcon} />博客</NaviGatorItem>
+          <NaviGatorItem to="/treasure"><NaviGatorItemLogo src={giftIcon} />百宝箱</NaviGatorItem>
+          <NaviGatorItem to="/about"><NaviGatorItemLogo src={aboutIcon} />关于</NaviGatorItem>
         </NavigatorContainer>
       </Content>
     </HeaderContainer>

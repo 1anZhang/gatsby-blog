@@ -7,7 +7,7 @@ import SEO from '../components/Seo';
 import Article from '../components/Article';
 
 
-const Content = styled.div`
+const Content = styled(Article)`
   grid-column: 2;
   box-shadow: 0 4px 120px rgba(0, 0, 0, 0.1);
   border-radius: 1rem;
@@ -22,10 +22,9 @@ const BlogPage = ({
 }) => (
   <Layout>
     <SEO title="blog" />
-    <h1>博客列表页</h1>
-    <Content>
+    <div>
         {posts.map(post => (
-          <Article
+          <Content
             title={post.frontmatter.title}
             date={post.frontmatter.date}
             excerpt={post.excerpt}
@@ -35,7 +34,7 @@ const BlogPage = ({
             key={post.fields.slug}
           />
         ))}
-      </Content>
+      </div>
   </Layout>
 );
 

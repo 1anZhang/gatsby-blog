@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'gatsby';
 import styled from 'styled-components';
-import Layout from '../components/layout';
+import IndexLayout from '../components/IndexLayout';
 import Image from '../components/Image';
 import SEO from '../components/Seo';
 
@@ -11,7 +11,7 @@ const ImageWrapper = styled.div`
 `;
 
 const IndexPage = () => (
-  <Layout>
+  <IndexLayout>
     <SEO title="张岩の个人网站" />
     <h1>一个正经的页面</h1>
     <p>Welcome to your new Gatsby site.</p>
@@ -20,7 +20,7 @@ const IndexPage = () => (
       <Image uri="dduck.jpg" />
     </ImageWrapper>
     <Link to="/about/">Go to page 2</Link>
-  </Layout>
+  </IndexLayout>
 );
 
 export default IndexPage;

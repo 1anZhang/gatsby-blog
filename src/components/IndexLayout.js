@@ -12,6 +12,8 @@ import styled, { createGlobalStyle } from 'styled-components';
 
 import Header from './Header';
 import Footer from './Footer';
+import Image from './Image';
+
 import './reset.css';
 
 const GlobalStyle = createGlobalStyle`
@@ -20,17 +22,32 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 const Wrapper = styled.div`
-  background: rgba(0, 0, 0, 0.);
+  position: relative;
 `;
+
+const HeadImgWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+`;
+
+const HeadImage = styled(Image)`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`
 
 const MainContent = styled.div`
   margin: 0 auto;
   max-width: 960px;
 `;
 
-const Layout = ({ children }) => {
+const IndexLayout = ({ children }) => {
   const data = useStaticQuery(graphql`
-    query SiteTitleQuery {
+    query IndexSiteTitleQuery {
       site {
         siteMetadata {
           title
@@ -42,6 +59,9 @@ const Layout = ({ children }) => {
   return (
     <Wrapper>
       <GlobalStyle />
+      <HeadImgWrapper>
+        <HeadImage uri="anime6.jpg" cover></HeadImage>
+      </HeadImgWrapper>
       <Header siteTitle={data.site.siteMetadata.title} />
       <MainContent>
         <main>{children}</main>
@@ -51,8 +71,8 @@ const Layout = ({ children }) => {
   );
 };
 
-Layout.propTypes = {
+IndexLayout.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default Layout;
+export default IndexLayout;
