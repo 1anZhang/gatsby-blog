@@ -17,7 +17,7 @@ var theme = {
   }, {
     types: ["builtin", "changed", "keyword"],
     style: {
-      color: "rgb(198, 120, 221)"
+      color: "#d49fd4)"
     }
   }, {
     types: ["number", "inserted"],
@@ -37,7 +37,12 @@ var theme = {
   }, {
     types: ["deleted", "string", "attr-value"],
     style: {
-      color: "rgb(152, 195, 121)"
+      color: "#a8e2a8"
+    }
+  }, {
+    types: ["attr-value"],
+    style: {
+      color: "#d49fd4"
     }
   }, {
     types: ["selector"],
