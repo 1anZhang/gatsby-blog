@@ -62,6 +62,9 @@ const NaviGatorItem = styled(Link)`
   &:hover {
     background: rgba(255, 255, 255, 0.15);
   }
+  &:active {
+    background: rgba(255, 255, 255, 0.25);
+  }
 `;
 
 const NaviGatorItemLogo = styled.img`

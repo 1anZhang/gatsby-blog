@@ -60,7 +60,7 @@ const IndexLayout = ({ children }) => {
     <Wrapper>
       <GlobalStyle />
       <HeadImgWrapper>
-        <HeadImage uri="anime6.jpg" cover></HeadImage>
+        <HeadImage uri="home-bg.jpg" cover></HeadImage>
       </HeadImgWrapper>
       <Header siteTitle={data.site.siteMetadata.title} />
       <MainContent>
