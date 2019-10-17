@@ -24,14 +24,14 @@ const ColorList = styled.div`
   display: flex;
   justify-content:space-around;
   flex-wrap: wrap;
-  width: 130px;
+  width: 120px;
 `
 
 const ColorItem = styled.div`
-  margin-bottom: 6px;
+  margin-bottom: 3px;
   width: 36px;
   height: 36px;
-  border-radius: 6px;
+  border-radius: 4px;
   background: ${prop => prop.color};
 `
 

@@ -5,13 +5,15 @@ class Color {
       this.g = g;
       this.b = b;
     } else {
-      this.r = this.decodeColor(r).r;
-      this.g = this.decodeColor(r).g;
-      this.b = this.decodeColor(r).b;
+      const color = this.decodeColor(r);
+      this.r = color.r;
+      this.g = color.g;
+      this.b = color.b;
     }
   }
 
   decodeColor(c) {
+    const rgbReg = /^rgb\(\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\s*\)$/;
     if (c.startsWith('#')) {
       if (c.length !== 4 && c.length !== 7) {
         throw new TypeError('unknown color type');
@@ -27,21 +29,35 @@ class Color {
         g = c.slice(3, 5);
         b = c.slice(5, 7);
       }
-
-      return this.hexToDec(r, g, b);
-    } else if (c.startsWith('rgb(')) {
-      return {};
+      return {
+        r: this.hexToDec(r),
+        g: this.hexToDec(g),
+        b: this.hexToDec(b),
+      }
+    } else if (rgbReg.test(c)) {
+      let colorResult = rgbReg.exec(c);
+      if (
+        0 > colorResult[1] ||
+        colorResult[1] > 255 ||
+        0 > colorResult[2] ||
+        colorResult[2] > 255 ||
+        0 > colorResult[3] ||
+        colorResult[3] > 255
+      ) {
+        throw new TypeError('颜色格式错误');
+      }
+      return {
+        r: parseInt(colorResult[1]),
+        g: parseInt(colorResult[2]),
+        b: parseInt(colorResult[3]),
+      };
     } else {
       throw new TypeError('暂不支持的颜色类型');
     }
   }
 
-  hexToDec(r, g, b) {
-    return {
-      r: parseInt(r, 16),
-      g: parseInt(g, 16),
-      b: parseInt(b, 16),
-    };
+  hexToDec(c) {
+    return parseInt(c, 16);
   }
 
   getColor() {
