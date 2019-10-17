@@ -14,46 +14,66 @@ const Wrapper = styled.div`
   max-width: 400px;
   border: 1px solid #adf;
   border-radius: 6px;
-`
+`;
 
-const ColorInput = styled.input`
-
-`
+const ColorInput = styled.input``;
 
 const ColorList = styled.div`
   display: flex;
-  justify-content:space-around;
+  justify-content: space-around;
   flex-wrap: wrap;
-  width: 120px;
-`
+  width: 210px;
+`;
 
 const ColorItem = styled.div`
+  position: relative;
   margin-bottom: 3px;
-  width: 36px;
-  height: 36px;
-  border-radius: 4px;
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
   background: ${prop => prop.color};
-`
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
 
+  &:hover {
+    transform: scale(1.2);
+    transform-origin: center;
+    z-index: 1;
+    &::after {
+      content: '${prop => prop.color}';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      width: 51px;
+      font-size: 12px;
+      color: ${prop => prop.index > 4 ? '#fff' : '#000'};
+      z-index: 2;
+    }
+  }
+`;
 
 const ColorSelect = () => {
   const [color, setColor] = useState('#FCF040');
-  const handleColorChange = (e) => {
-    setColor(e.target.value)
+  const handleColorChange = e => {
+    setColor(e.target.value);
   };
+
+  const handleCopy = (color) => {
+    console.log(color);
+  }
 
   const cc = new Color(color);
   const cl = cc.getColorGradeList();
 
   return (
     <Wrapper>
-      <ColorInput type='color' onChange={handleColorChange} value={color} />
+      <ColorInput type="color" onChange={handleColorChange} value={color} />
       <ColorList>
-        {
-          cl.map((c) => (
-            <ColorItem color={c} key={c} />
-          ))
-        }
+        {cl.map((c, i) => (
+          <ColorItem color={c} index={i} key={c} onClick={handleCopy(c)}/>
+        ))}
       </ColorList>
     </Wrapper>
   );
