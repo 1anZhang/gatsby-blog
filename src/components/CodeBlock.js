@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import Highlight, { defaultProps } from 'prism-react-renderer';
+// import Highlight, { defaultProps } from 'prism-react-renderer';
+import Highlight from './Highlight';
 // import theme from 'prism-react-renderer/themes/vsDark';
-import theme from '../utils/theme';
+// import theme from '../utils/theme';
 
 const CodeWrapper = styled.pre`
   position: relative;
@@ -37,20 +38,7 @@ const CopyContainer = styled.div`
 export default ({ children, className }) => {
   const language = className.replace(/language-/, '');
   return (
-    <Highlight {...defaultProps} code={children} language={language} theme={theme}>
-      {({ className, style, tokens, getLineProps, getTokenProps }) => (
-        <CodeWrapper className={className} style={{ ...style }}>
-          <CopyContainer>Copy</CopyContainer>
-          {tokens.map((line, i) => (
-            <div key={i} {...getLineProps({ line, key: i })}>
-              <LineNumber>{i}</LineNumber>
-              {line.map((token, key) => (
-                <span key={key} {...getTokenProps({ token, key })} />
-              ))}
-            </div>
-          ))}
-        </CodeWrapper>
-      )}
+    <Highlight code={children} language={language}>
     </Highlight>
   );
 };

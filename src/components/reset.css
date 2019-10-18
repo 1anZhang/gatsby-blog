@@ -94,7 +94,7 @@ code,
 kbd,
 pre,
 samp {
-  font-family: monospace, monospace;
+  font-family: Consola, monospace;
   font-size: 1em;
 }
 figure {
@@ -403,11 +403,11 @@ pre {
   margin-bottom: 1.45rem;
   font-size: 0.85rem;
   line-height: 1.42;
-  background: hsla(0, 0%, 0%, 0.04);
+  /* background: hsla(0, 0%, 0%, 0.04); */
   border-radius: 3px;
   overflow: auto;
   word-wrap: normal;
-  padding: 1.45rem;
+  /* padding: 1.45rem; */
 }
 table {
   margin-left: 0;
