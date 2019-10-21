@@ -68,6 +68,11 @@ class Color {
     };
   }
 
+  // todo
+  getHsl() {
+    
+  }
+
   componentToHex(c) {
     const hex = c.toString(16);
     return hex.length === 1 ? '0' + hex : hex;
@@ -84,6 +89,11 @@ class Color {
 
   toRgb() {
     return `rgb(${this.r},${this.g},${this.b})`;
+  }
+
+  // todo 
+  toHsl() {
+    return this.getHsl();
   }
 
   tint(color, percentage) {
