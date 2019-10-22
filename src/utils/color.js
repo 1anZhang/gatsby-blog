@@ -1,14 +1,14 @@
 class Color {
-  constructor(r, g, b) {
-    if (g) {
-      this.r = r;
-      this.g = g;
-      this.b = b;
+  constructor(color, options) {
+    if (color instanceof Object) {
+      this._r = color.r;
+      this._g = color.g;
+      this._b = color.b;
     } else {
-      const color = this.decodeColor(r);
-      this.r = color.r;
-      this.g = color.g;
-      this.b = color.b;
+      const decodedColor = this.decodeColor(color);
+      this._r = decodedColor.r;
+      this._g = decodedColor.g;
+      this._b = decodedColor.b;
     }
   }
 
@@ -33,7 +33,7 @@ class Color {
         r: this.hexToDec(r),
         g: this.hexToDec(g),
         b: this.hexToDec(b),
-      }
+      };
     } else if (rgbReg.test(c)) {
       let colorResult = rgbReg.exec(c);
       if (
@@ -62,15 +62,41 @@ class Color {
 
   getColor() {
     return {
-      r: this.r,
-      g: this.g,
-      b: this.b,
+      r: this._r,
+      g: this._g,
+      b: this._b,
     };
   }
 
   // todo
   getHsl() {
-    
+    const r = this._r / 255;
+    const g = this._g / 255;
+    const b = this._b / 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const average = (max + min) / 2;
+    let h,
+      s,
+      l = average;
+    if (max === min) {
+      h = s = 0;
+    } else {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - 2 * average) : d / (2 * average);
+      switch (max) {
+        case r:
+          h = ((g - b) / d) * 60 + (g < b ? 360 : 0);
+          break;
+        case g:
+          h = ((b - r) / d) * 60 + 120;
+          break;
+        case b:
+          h = ((r - g) / d) * 60 + 240;
+          break;
+      }
+    }
+    return { h, s, l };
   }
 
   componentToHex(c) {
@@ -81,19 +107,19 @@ class Color {
   toHex() {
     return (
       '#' +
-      this.componentToHex(this.r) +
-      this.componentToHex(this.g) +
-      this.componentToHex(this.b)
+      this.componentToHex(this._r) +
+      this.componentToHex(this._g) +
+      this.componentToHex(this._b)
     );
   }
 
   toRgb() {
-    return `rgb(${this.r},${this.g},${this.b})`;
+    return `rgb(${this._r},${this._g},${this._b})`;
   }
 
-  // todo 
+  // todo
   toHsl() {
-    return this.getHsl();
+    return this._getHsl();
   }
 
   tint(color, percentage) {
@@ -105,13 +131,13 @@ class Color {
   }
 
   mix(originColor, targetColor, percentage) {
-    let r = (targetColor.r - originColor.r) * (percentage / 100);
-    let g = (targetColor.g - originColor.g) * (percentage / 100);
-    let b = (targetColor.b - originColor.b) * (percentage / 100);
-    r = Math.floor(r) + originColor.r;
-    g = Math.floor(g) + originColor.g;
-    b = Math.floor(b) + originColor.b;
-    return new Color(r, g, b);
+    let r = (targetColor._r - originColor._r) * (percentage / 100);
+    let g = (targetColor._g - originColor._g) * (percentage / 100);
+    let b = (targetColor._b - originColor._b) * (percentage / 100);
+    r = Math.floor(r) + originColor._r;
+    g = Math.floor(g) + originColor._g;
+    b = Math.floor(b) + originColor._b;
+    return new Color({ r, g, b });
   }
 
   getHoverColor() {
