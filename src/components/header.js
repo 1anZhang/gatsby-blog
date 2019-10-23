@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
 
+import Color from '../utils/color';
+
 import logoIcon from '../images/icons/duck.svg';
 import homeIcon from '../images/icons/home.svg';
 import blogIcon from '../images/icons/blog.svg';
@@ -11,6 +13,7 @@ import aboutIcon from '../images/icons/about.svg';
 
 
 const HeaderContainer = styled.header`
+  background-color: ${props => props.bgColor};
   margin-bottom: 24px;
 `;
 
@@ -75,7 +78,7 @@ const NaviGatorItemLogo = styled.img`
 `;
 
 
-const Header = ({ siteTitle }) => {
+const Header = ({ siteTitle, type }) => {
   const { site } = useStaticQuery(
     graphql`
       query {
@@ -87,9 +90,11 @@ const Header = ({ siteTitle }) => {
       }
     `
   );
+  const isTransParent = type === 'transparent';
+  const bgColor = isTransParent ? 'transparent' : site.siteMetadata.theme_color;
 
   return (
-    <HeaderContainer backgroundColor={site.siteMetadata.theme_color}>
+    <HeaderContainer bgColor={bgColor}>
       <Content>
         <LinkHome to="/">
           <Logo src={logoIcon} />

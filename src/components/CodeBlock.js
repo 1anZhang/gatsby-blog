@@ -38,7 +38,6 @@ const CopyContainer = styled.div`
 export default ({ children, className }) => {
   const language = className.replace(/language-/, '');
   return (
-    <Highlight code={children} language={language}>
-    </Highlight>
+    <Highlight code={children} language={language}></Highlight>
   );
 };

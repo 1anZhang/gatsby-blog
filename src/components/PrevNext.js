@@ -5,9 +5,8 @@ import { Link } from 'gatsby'
 
 const Wrapper = styled.div`
   display: flex;
-  margin: 6rem auto 0 auto;
+  margin: 2rem auto 0 auto;
   a {
-    color: #E6A92E;
     display: flex;
     align-items: center;
   }

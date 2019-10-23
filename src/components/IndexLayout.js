@@ -12,7 +12,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 
 import Header from './Header';
 import Footer from './Footer';
-import Image from './Image';
+import HomeBg from '../images/home-bg.jpg';
 
 import './reset.css';
 
@@ -34,7 +34,7 @@ const HeadImgWrapper = styled.div`
   z-index: -1;
 `;
 
-const HeadImage = styled(Image)`
+const HeadImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -60,9 +60,9 @@ const IndexLayout = ({ children }) => {
     <Wrapper>
       <GlobalStyle />
       <HeadImgWrapper>
-        <HeadImage uri="home-bg.jpg" cover></HeadImage>
+        <HeadImage src={HomeBg}></HeadImage>
       </HeadImgWrapper>
-      <Header siteTitle={data.site.siteMetadata.title} />
+      <Header siteTitle={data.site.siteMetadata.title} type="transparent"/>
       <MainContent>
         <main>{children}</main>
         <Footer>© {new Date().getFullYear()}, Built by Gatsby with ❤️</Footer>

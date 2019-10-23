@@ -1,13 +1,24 @@
 import React from 'react';
+import styled from 'styled-components';
 import { graphql } from 'gatsby';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
 import {MDXProvider} from '@mdx-js/react';
 import Layout from '../components/layout';
 import CodeBlock from '../components/CodeBlock';
-import PrevNext from '../components/PrevNext'
+import PrevNext from '../components/PrevNext';
+
+const MainContent = styled.div`
+  margin: 0 auto;
+  max-width: 680px;
+`;
+
+const Pre = styled.div`
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 3px 13px;
+  border-radius: 5px;
+` 
 
 const components = {
-  pre: props => <div {...props} />,
+  pre: props => <Pre {...props} />,
   code: CodeBlock
 }
 
@@ -17,10 +28,15 @@ export default ({
 }) => {
   return (
     <Layout>
-      <MDXProvider components={components}>
-        <MDXRenderer>{postNode.body}</MDXRenderer>
-      </MDXProvider>
-      <PrevNext prev={prev} next={next} />
+      <MainContent>
+        <h1>{postNode.frontmatter.title}</h1>
+        <h2>{postNode.frontmatter.date}</h2>
+        {/* <h2>{postNode.frontmatter.categories}</h2> */}
+        <MDXProvider components={components}>
+          <MDXRenderer>{postNode.body}</MDXRenderer>
+        </MDXProvider>
+        <PrevNext prev={prev} next={next} />
+      </MainContent>
     </Layout>
   );
 };

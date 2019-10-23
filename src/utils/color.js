@@ -1,5 +1,8 @@
 class Color {
   constructor(color, options) {
+    if (color instanceof Color) {
+      return color;
+    }
     if (color instanceof Object) {
       this._r = color.r;
       this._g = color.g;
@@ -60,7 +63,7 @@ class Color {
     return parseInt(c, 16);
   }
 
-  getColor() {
+  getRgbObject() {
     return {
       r: this._r,
       g: this._g,
@@ -68,8 +71,7 @@ class Color {
     };
   }
 
-  // todo
-  getHsl() {
+  getHslObject() {
     const r = this._r / 255;
     const g = this._g / 255;
     const b = this._b / 255;
@@ -96,30 +98,34 @@ class Color {
           break;
       }
     }
-    return { h, s, l };
+    return { h: Math.round(h), s: s.toFixed(2), l: l.toFixed(2) };
   }
 
-  componentToHex(c) {
+  decToHex(c) {
     const hex = c.toString(16);
     return hex.length === 1 ? '0' + hex : hex;
   }
 
-  toHex() {
-    return (
-      '#' +
-      this.componentToHex(this._r) +
-      this.componentToHex(this._g) +
-      this.componentToHex(this._b)
-    );
+  toHexString(allow3Char) {
+    let r = this.decToHex(this._r);
+    let g = this.decToHex(this._g);
+    let b = this.decToHex(this._b);
+    // if hex color can be convert to 3 char
+    if (allow3Char && r[0] === r[1] && g[0] === g[1] && b[0] === b[1]) {
+      r = r[0]; 
+      g = g[0]; 
+      b = b[0]; 
+    }
+    return `#${r}${g}${b}`;
   }
 
-  toRgb() {
-    return `rgb(${this._r},${this._g},${this._b})`;
+  toRgbString() {
+    return `rgb(${this._r}, ${this._g}, ${this._b})`;
   }
 
-  // todo
-  toHsl() {
-    return this._getHsl();
+  toHslString() {
+    const hsl = this.getHslObject();
+    return `hsl(${hsl.h}, ${hsl.s * 100}%, ${hsl.l * 100}%)`;
   }
 
   tint(color, percentage) {
@@ -141,24 +147,24 @@ class Color {
   }
 
   getHoverColor() {
-    return this.tint(this, 20).toHex();
+    return this.tint(this, 80).toHexString();
   }
 
   getActiveColor() {
-    return this.shade(this, 5).toHex();
+    return this.shade(this, 5).toHexString();
   }
 
   getColorGradeList() {
     return [
-      this.tint(this, 20).toHex(),
-      this.tint(this, 40).toHex(),
-      this.tint(this, 60).toHex(),
-      this.tint(this, 80).toHex(),
-      this.toHex(),
-      this.shade(this, 20).toHex(),
-      this.shade(this, 40).toHex(),
-      this.shade(this, 60).toHex(),
-      this.shade(this, 80).toHex(),
+      this.tint(this, 20).toHexString(),
+      this.tint(this, 40).toHexString(),
+      this.tint(this, 60).toHexString(),
+      this.tint(this, 80).toHexString(),
+      this.toHexString(),
+      this.shade(this, 20).toHexString(),
+      this.shade(this, 40).toHexString(),
+      this.shade(this, 60).toHexString(),
+      this.shade(this, 80).toHexString(),
     ];
   }
 }

@@ -55,7 +55,7 @@ const ColorItem = styled.div`
 `;
 
 const ColorSelect = () => {
-  const [color, setColor] = useState('#FCF040');
+  const [color, setColor] = useState('#e28f04');
   const handleColorChange = e => {
     setColor(e.target.value);
   };
@@ -66,13 +66,15 @@ const ColorSelect = () => {
 
   const cc = new Color(color);
   const cl = cc.getColorGradeList();
+  console.log(cc.getHoverColor());
+  console.log(cc.getActiveColor());
 
   return (
     <Wrapper>
       <ColorInput type="color" onChange={handleColorChange} value={color} />
       <ColorList>
         {cl.map((c, i) => (
-          <ColorItem color={c} index={i} key={c} onClick={handleCopy(c)}/>
+          <ColorItem color={c} index={i} key={c} onClick={() => handleCopy(c)}/>
         ))}
       </ColorList>
     </Wrapper>

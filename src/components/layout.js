@@ -12,20 +12,32 @@ import styled, { createGlobalStyle } from 'styled-components';
 
 import Header from './Header';
 import Footer from './Footer';
+
 import './reset.css';
 
 const GlobalStyle = createGlobalStyle`
   a {
+    color: ${props => props.color};
     text-decoration: none;
+
+    &:hover {
+      color: #edbb68;
+      text-decoration: underline;
+    }
+
+    &:active {
+      color: #d68703;
+    }
   }
 `;
+
 const Wrapper = styled.div`
-  background: rgba(0, 0, 0, 0.);
+  background: rgba(0, 0, 0, 0);
 `;
 
-const MainContent = styled.div`
-  margin: 0 auto;
-  max-width: 960px;
+const MainContent = styled.main`
+  /* margin: 0 auto; */
+  /* max-width: 680px; */
 `;
 
 const Layout = ({ children }) => {
@@ -34,6 +46,7 @@ const Layout = ({ children }) => {
       site {
         siteMetadata {
           title
+          theme_color
         }
       }
     }
@@ -41,12 +54,10 @@ const Layout = ({ children }) => {
 
   return (
     <Wrapper>
-      <GlobalStyle />
+      <GlobalStyle color={data.site.siteMetadata.theme_color} />
       <Header siteTitle={data.site.siteMetadata.title} />
-      <MainContent>
-        <main>{children}</main>
-        <Footer>© {new Date().getFullYear()}, Built by Gatsby with ❤️</Footer>
-      </MainContent>
+      <MainContent>{children}</MainContent>
+      <Footer>© {new Date().getFullYear()}, Built by Gatsby with ❤️</Footer>
     </Wrapper>
   );
 };
