@@ -98,7 +98,7 @@ const Header = ({ siteTitle, type }) => {
       <Content>
         <LinkHome to="/">
           <Logo src={logoIcon} />
-          <Title>{siteTitle}</Title>
+          {/* <Title>{siteTitle}</Title> */}
         </LinkHome>
         <NavigatorContainer>
           <NaviGatorItem to="/"><NaviGatorItemLogo src={homeIcon} />首页</NaviGatorItem>

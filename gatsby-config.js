@@ -2,7 +2,7 @@ module.exports = {
   siteMetadata: {
     title: `张岩の个人网站`,
     description: `the journey begin！`,
-    author: `张岩`,
+    author: `zhangyxy`,
     background_color: `#e28f04`,
     theme_color: `#e28f04`,
     primary_color1: '#66FEAD',
