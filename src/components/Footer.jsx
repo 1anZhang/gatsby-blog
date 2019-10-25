@@ -4,6 +4,7 @@ import { Link, graphql, useStaticQuery } from 'gatsby';
 
 const FooterWrapper = styled.footer`
   width: 100%;
+  margin-top: 18px;
   padding: 36px 15% 12px 15%;
   background-color: ${p => p.color};
   color: white;

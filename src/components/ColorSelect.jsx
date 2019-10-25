@@ -8,6 +8,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Color from '../utils/color';
+import { copyToClipboard } from '../utils/lo';
 
 const Wrapper = styled.div`
   padding: 24px;
@@ -61,13 +62,11 @@ const ColorSelect = () => {
   };
 
   const handleCopy = (color) => {
-    console.log(color);
+    copyToClipboard(color);
   }
 
   const cc = new Color(color);
   const cl = cc.getColorGradeList();
-  console.log(cc.getHoverColor());
-  console.log(cc.getActiveColor());
 
   return (
     <Wrapper>

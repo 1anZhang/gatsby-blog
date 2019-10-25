@@ -18,3 +18,10 @@ export const copyToClipboard = str => {
     document.getSelection().addRange(selected);   // Restore the original selection
   }
 };
+
+export const calcReadTime = words => {
+  console.log('123213', words);
+  let m = words / 200;
+  m = Math.round(m);
+  return m;
+}
