@@ -1,11 +1,11 @@
-import Calender from './Calender';
-import Clock from './Clock';
-import Copy from './Copy';
-import Label from './Label';
+import CalenderIcon from './CalenderIcon';
+import ClockIcon from './ClockIcon';
+import CopyIcon from './CopyIcon';
+import LabelIcon from './LabelIcon';
 
 export {
-  Calender,
-  Clock,
-  Copy,
-  Label
+  CalenderIcon,
+  ClockIcon,
+  CopyIcon,
+  LabelIcon
 }
