@@ -29,6 +29,11 @@ const GlobalStyle = createGlobalStyle`
       color: #d68703;
     }
   }
+  ::selection {
+    color: #fff;
+    text-shadow: none;
+    background: ${p => p.color};
+  }
 `;
 
 const Wrapper = styled.div`
@@ -57,7 +62,7 @@ const Layout = ({ children }) => {
       <GlobalStyle color={data.site.siteMetadata.theme_color} />
       <Header siteTitle={data.site.siteMetadata.title} />
       <MainContent>{children}</MainContent>
-      <Footer>© {new Date().getFullYear()}, Built by Gatsby with ❤️</Footer>
+      <Footer />
     </Wrapper>
   );
 };

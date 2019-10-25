@@ -38,10 +38,9 @@ const BgImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-`
-
-const MainContent = styled.div`
 `;
+
+const MainContent = styled.div``;
 
 const IndexLayout = ({ children }) => {
   const data = useStaticQuery(graphql`
@@ -49,6 +48,7 @@ const IndexLayout = ({ children }) => {
       site {
         siteMetadata {
           title
+          theme_color
         }
       }
     }
@@ -56,11 +56,11 @@ const IndexLayout = ({ children }) => {
 
   return (
     <Wrapper>
-      <GlobalStyle />
+      <GlobalStyle themeColor={data.site.siteMetadata.theme_color}/>
       <BgImgWrapper>
         <BgImage src={HomeBg}></BgImage>
       </BgImgWrapper>
-      <Header siteTitle={data.site.siteMetadata.title} type="transparent"/>
+      <Header siteTitle={data.site.siteMetadata.title} type="transparent" />
       <MainContent>{children}</MainContent>
     </Wrapper>
   );
