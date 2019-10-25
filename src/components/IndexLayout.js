@@ -25,7 +25,7 @@ const Wrapper = styled.div`
   position: relative;
 `;
 
-const HeadImgWrapper = styled.div`
+const BgImgWrapper = styled.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -34,15 +34,13 @@ const HeadImgWrapper = styled.div`
   z-index: -1;
 `;
 
-const HeadImage = styled.img`
+const BgImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
 `
 
 const MainContent = styled.div`
-  margin: 0 auto;
-  max-width: 960px;
 `;
 
 const IndexLayout = ({ children }) => {
@@ -59,14 +57,11 @@ const IndexLayout = ({ children }) => {
   return (
     <Wrapper>
       <GlobalStyle />
-      <HeadImgWrapper>
-        <HeadImage src={HomeBg}></HeadImage>
-      </HeadImgWrapper>
+      <BgImgWrapper>
+        <BgImage src={HomeBg}></BgImage>
+      </BgImgWrapper>
       <Header siteTitle={data.site.siteMetadata.title} type="transparent"/>
-      <MainContent>
-        <main>{children}</main>
-        <Footer>© {new Date().getFullYear()}, Built by Gatsby with ❤️</Footer>
-      </MainContent>
+      <MainContent>{children}</MainContent>
     </Wrapper>
   );
 };

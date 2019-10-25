@@ -60,9 +60,9 @@ const NaviGatorItem = styled(Link)`
   border-radius: 10px;
   font-size: 14px;
   line-height: 1;
-  color: rgba(255, 255, 255, 0.8);
-  transition: background 0.3s ease-in-out;
+  color: rgba(255, 255, 255, 0.9);
   &:hover {
+    color: rgba(255, 255, 255, 0.9);
     background: rgba(255, 255, 255, 0.15);
   }
   &:active {

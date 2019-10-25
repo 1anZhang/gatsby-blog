@@ -10,16 +10,21 @@ const ImageWrapper = styled.div`
   margin-bottom: 24px;
 `;
 
+const Time = styled.div`
+  margin-top: 120px;
+  font-size:120px;
+  color: white;
+  font-family: monospace;
+  text-align: center;
+`;
+
 const IndexPage = () => (
   <IndexLayout>
     <SEO title="张岩の个人网站" />
-    <h1>一个正经的页面</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <ImageWrapper>
+    <Time>{new Date().getHours()+ ':' + new Date().getMinutes()}</Time>
+    {/* <ImageWrapper>
       <Image uri="dduck.jpg" />
-    </ImageWrapper>
-    <Link to="/about/">Go to page 2</Link>
+    </ImageWrapper> */}
   </IndexLayout>
 );
 
