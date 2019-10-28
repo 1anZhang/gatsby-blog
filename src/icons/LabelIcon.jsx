@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CopyIcon = ({ color = '#fff', size = 32 }) => {
+const LabelIcon = ({ color = '#fff', size = 32 }) => {
   return (
     <svg
       t="1571994181102"
@@ -21,4 +21,4 @@ const CopyIcon = ({ color = '#fff', size = 32 }) => {
   );
 };
 
-export default CopyIcon;
+export default LabelIcon;

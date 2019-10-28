@@ -20,7 +20,6 @@ export const copyToClipboard = str => {
 };
 
 export const calcReadTime = words => {
-  console.log('123213', words);
   let m = words / 200;
   m = Math.round(m);
   return m;

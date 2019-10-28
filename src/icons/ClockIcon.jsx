@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CopyIcon = ({ color = '#fff', size = 32 }) => {
+const ClockIcon = ({ color = '#fff', size = 32 }) => {
   return (
     <svg
       t="1571994291000"
@@ -31,4 +31,4 @@ const CopyIcon = ({ color = '#fff', size = 32 }) => {
   );
 };
 
-export default CopyIcon;
+export default ClockIcon;
