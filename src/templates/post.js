@@ -5,7 +5,6 @@ import { MDXRenderer } from 'gatsby-plugin-mdx';
 import {MDXProvider} from '@mdx-js/react';
 import kebabCase from 'lodash/kebabCase';
 import { calcReadTime } from '../utils/lo';
-import { Calender, Clock, Label } from '../icons';
 import Layout from '../components/Layout';
 import CodeBlock from '../components/CodeBlock';
 import PrevNext from '../components/PrevNext';
