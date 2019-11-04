@@ -103,7 +103,7 @@ const Header = ({ siteTitle, type }) => {
         <NavigatorContainer>
           <NaviGatorItem to="/"><NaviGatorItemLogo src={homeIcon} />首页</NaviGatorItem>
           <NaviGatorItem to="/blog"><NaviGatorItemLogo src={blogIcon} />博客</NaviGatorItem>
-          <NaviGatorItem to="/treasure"><NaviGatorItemLogo src={giftIcon} />百宝箱</NaviGatorItem>
+          <NaviGatorItem to="/treasure"><NaviGatorItemLogo src={giftIcon} />黑盒</NaviGatorItem>
           <NaviGatorItem to="/about"><NaviGatorItemLogo src={aboutIcon} />关于</NaviGatorItem>
         </NavigatorContainer>
       </Content>

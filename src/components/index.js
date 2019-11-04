@@ -1,4 +1,5 @@
 import Article from './Article';
+import Bezier from './Bezier';
 import CodeBlock from './CodeBlock';
 import ColorSelect from './ColorSelect';
 import Footer from './Footer';
@@ -13,6 +14,7 @@ import Subline from './Subline';
 
 export {
   Article,
+  Bezier,
   CodeBlock,
   ColorSelect,
   Footer,

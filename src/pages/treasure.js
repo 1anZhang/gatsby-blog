@@ -9,6 +9,7 @@ const TreasurePage = () => (
     <SEO title="treasure" />
     <h1>百宝箱页面</h1>
     <Link to="/color">Color</Link>
+    <Link to="/bezier">Bezier Curve</Link>
   </Layout>
 );
 
