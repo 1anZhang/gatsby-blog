@@ -1,15 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import BezierEasing from 'bezier-easing';
 import styled from 'styled-components';
 
 const BezierWrapper = styled.div`
   display: inline-block;
   padding: 20px;
-`;
-
-const Bottom = styled.p`
-  font-size: 14px;
-  font-family: sans-serif;
 `;
 
 const Bezier = ({

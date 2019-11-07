@@ -96,6 +96,7 @@ class Color {
         case b:
           h = ((r - g) / d) * 60 + 240;
           break;
+        default:
       }
     }
     return { h: Math.round(h), s: s.toFixed(2), l: l.toFixed(2) };

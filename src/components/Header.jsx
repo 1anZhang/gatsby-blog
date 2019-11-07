@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
 
-import Color from '../utils/color';
-
 import logoIcon from '../images/icons/duck.svg';
 import homeIcon from '../images/icons/home.svg';
 import blogIcon from '../images/icons/blog.svg';
@@ -36,13 +34,6 @@ const Logo = styled.img`
   height: 32px;
   margin: 0;
   line-height: 32px;
-`;
-
-const Title = styled.h1`
-  margin: 0 0 0 32px;
-  display: inline;
-  font-size: 24px;
-  font-family: 'PingFang-SC';
 `;
 
 const NavigatorContainer = styled.div`
