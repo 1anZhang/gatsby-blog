@@ -49,7 +49,7 @@ const ColorItem = styled.div`
       margin: 0 auto;
       width: 51px;
       font-size: 12px;
-      color: ${prop => prop.index > 4 ? '#fff' : '#000'};
+      color: ${prop => (prop.index > 4 ? '#fff' : '#000')};
       z-index: 2;
     }
   }
@@ -61,9 +61,9 @@ const ColorSelect = () => {
     setColor(e.target.value);
   };
 
-  const handleCopy = (color) => {
+  const handleCopy = color => {
     copyToClipboard(color);
-  }
+  };
 
   const cc = new Color(color);
   const cl = cc.getColorGradeList();
@@ -73,7 +73,12 @@ const ColorSelect = () => {
       <ColorInput type="color" onChange={handleColorChange} value={color} />
       <ColorList>
         {cl.map((c, i) => (
-          <ColorItem color={c} index={i} key={c} onClick={() => handleCopy(c)}/>
+          <ColorItem
+            color={c}
+            index={i}
+            key={c}
+            onClick={() => handleCopy(c)}
+          />
         ))}
       </ColorList>
     </Wrapper>

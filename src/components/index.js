@@ -25,5 +25,5 @@ export {
   Layout,
   PrevNext,
   Seo,
-  Subline
-}
+  Subline,
+};

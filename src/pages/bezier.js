@@ -1,39 +1,23 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 import { Bezier, Seo, Layout } from '../components';
 
 const TreasurePage = () => {
-  const [o1, setO1] = useState([{ x: 0.3, y: 0.1},{ x: 0.1, y: 0.8 }]);
-  const [o2, setO2] = useState([{ x: 0.3, y: 0.4},{ x: 0.1, y: 0.8 }]);
-  const handleChange1 = (x, y, i) => {
-    let t = [...o1];
-    t[i-1] = {x, y};
-    setO1(t);
+  const [o1, setO1] = useState([0.3, 0.2, 0.9, 0, 2]);
+  const [o2, setO2] = useState([0.2, 0.9, 0.9, 0.1]);
+  const handleChange1 = (x1, y1, x2, y2) => {
+    setO1([x1, y1, x2, y2]);
   };
-  const handleChange2 = (x, y, i) => {
-    let t = [...o2];
-    t[i-1] = {x, y};
-    setO2(t);
+  const handleChange2 = (x1, y1, x2, y2) => {
+    setO2([x1, y1, x2, y2]);
   };
 
   return (
     <Layout>
       <Seo title="bezier-curve" />
 
-      <Bezier
-        x1={o1[0].x}
-        y1={o1[0].y}
-        x2={o1[1].x}
-        y2={o1[1].y}
-        onAnchorChange={handleChange1}
-      />
-      <Bezier
-        x1={o2[0].x}
-        y1={o2[0].y}
-        x2={o2[1].x}
-        y2={o2[1].y}
-        onAnchorChange={handleChange2}
-      />
+      <Bezier value={o1} onAnchorChange={handleChange1} />
+      <Bezier value={o2} onAnchorChange={handleChange2} />
     </Layout>
   );
 };

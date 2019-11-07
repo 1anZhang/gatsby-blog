@@ -112,9 +112,9 @@ class Color {
     let b = this.decToHex(this._b);
     // if hex color can be convert to 3 char
     if (allow3Char && r[0] === r[1] && g[0] === g[1] && b[0] === b[1]) {
-      r = r[0]; 
-      g = g[0]; 
-      b = b[0]; 
+      r = r[0];
+      g = g[0];
+      b = b[0];
     }
     return `#${r}${g}${b}`;
   }

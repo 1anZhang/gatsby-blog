@@ -15,5 +15,5 @@ export {
   CopyIcon,
   GiftIcon,
   HomeIcon,
-  LabelIcon
-}
+  LabelIcon,
+};

@@ -4,7 +4,5 @@ import Highlight from './Highlight';
 
 export default ({ children, className }) => {
   const language = className.replace(/language-/, '');
-  return (
-    <Highlight code={children} language={language}></Highlight>
-  );
+  return <Highlight code={children} language={language}></Highlight>;
 };

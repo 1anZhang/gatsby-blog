@@ -56,7 +56,7 @@ const IndexLayout = ({ children }) => {
 
   return (
     <Wrapper>
-      <GlobalStyle themeColor={data.site.siteMetadata.theme_color}/>
+      <GlobalStyle themeColor={data.site.siteMetadata.theme_color} />
       <BgImgWrapper>
         <BgImage src={HomeBg}></BgImage>
       </BgImgWrapper>

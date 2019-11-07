@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link, graphql } from 'gatsby';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
-import {MDXProvider} from '@mdx-js/react';
+import { MDXProvider } from '@mdx-js/react';
 import kebabCase from 'lodash/kebabCase';
 import { calcReadTime } from '../utils/lo';
 import Layout from '../components/Layout';
@@ -24,9 +24,7 @@ const Title = styled.h1`
   line-height: 48px;
   font-family: Georgia;
 `;
-const InfoGroup = styled.div`
-
-`;
+const InfoGroup = styled.div``;
 
 const InfoItem = styled.p`
   font-size: 20px;
@@ -41,8 +39,8 @@ const CatagoryItem = styled(Link)`
 
 const components = {
   pre: props => <Pre {...props} />,
-  code: CodeBlock
-}
+  code: CodeBlock,
+};
 
 export default ({
   pageContext: { slug, prev, next },
@@ -57,11 +55,11 @@ export default ({
           <InfoItem>{postNode.frontmatter.date}</InfoItem>
           <InfoItem>{readTime}min read</InfoItem>
           <InfoItem>
-          {
-            postNode.frontmatter.categories.map((item) => (
-              <CatagoryItem key={item} to={`/categories/${kebabCase(item)}`}>{item}</CatagoryItem>
-            ))
-          }
+            {postNode.frontmatter.categories.map(item => (
+              <CatagoryItem key={item} to={`/categories/${kebabCase(item)}`}>
+                {item}
+              </CatagoryItem>
+            ))}
           </InfoItem>
         </InfoGroup>
         <MDXProvider components={components}>

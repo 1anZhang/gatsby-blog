@@ -19,7 +19,6 @@ hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('bash', bash);
 hljs.registerLanguage('css', css);
 
-
 const Pre = styled.pre`
   position: relative;
 
@@ -60,12 +59,12 @@ const CopyContainer = styled.div`
   cursor: pointer;
   box-sizing: border-box;
   opacity: 0;
-  transition: transform .5s;
+  transition: transform 0.5s;
 
   &:hover {
     transform: scale(1.3) rotate(180deg);
   }
-`
+`;
 
 const Code = styled.code`
   padding: 36px 18px 18px 12px !important;
@@ -87,7 +86,7 @@ const Highlight = ({ code, language }) => {
 
   const CopyCode = () => {
     copyToClipboard(code);
-  }
+  };
 
   return (
     <Pre ref={thisEl}>
@@ -96,7 +95,9 @@ const Highlight = ({ code, language }) => {
         <FakeButton color="#FFBD2E" stroke="#DEA123" left="20"></FakeButton>
         <FakeButton color="#27C93F" stroke="#1AAB29" left="40"></FakeButton>
       </FakeButtonGroup>
-      <CopyContainer className="copy" onClick={CopyCode}><CopyIcon color="#FFBD2E" size={16} /></CopyContainer>
+      <CopyContainer className="copy" onClick={CopyCode}>
+        <CopyIcon color="#FFBD2E" size={16} />
+      </CopyContainer>
       <Code className={language}>{code}</Code>
     </Pre>
   );

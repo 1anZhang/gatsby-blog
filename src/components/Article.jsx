@@ -1,17 +1,17 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import { Link } from 'gatsby'
-import kebabCase from 'lodash/kebabCase'
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { Link } from 'gatsby';
+import kebabCase from 'lodash/kebabCase';
 
-import Subline from './Subline'
+import Subline from './Subline';
 
 const Post = styled.article`
   display: flex;
   flex-direction: column;
   margin-top: 3.5rem;
   margin-bottom: 3.5rem;
-`
+`;
 
 const Title = styled.h2`
   position: relative;
@@ -23,7 +23,7 @@ const Title = styled.h2`
       color: rgba(011, 124, 242, 0.35);
     }
   }
-`
+`;
 
 const Initiale = styled.span`
   position: absolute;
@@ -32,16 +32,16 @@ const Initiale = styled.span`
   opacity: 0.08;
   user-select: none;
   z-index: -1;
-`
+`;
 
 const Excerpt = styled.p`
   grid-column: -1 / 1;
   margin-top: 1rem;
   margin-bottom: 1rem;
-`
+`;
 
 const Article = ({ title, date, excerpt, slug, timeToRead, categories }) => {
-  const firstChar = title.charAt(0)
+  const firstChar = title.charAt(0);
 
   return (
     <Post>
@@ -51,19 +51,20 @@ const Article = ({ title, date, excerpt, slug, timeToRead, categories }) => {
       </Title>
       <Subline>
         {date} &mdash; {timeToRead} Min Read &mdash; In{' '}
-        {categories && categories.map((cat, i) => (
-          <React.Fragment key={cat}>
-            {!!i && ', '}
-            <Link to={`/categories/${kebabCase(cat)}`}>{cat}</Link>
-          </React.Fragment>
-        ))}
+        {categories &&
+          categories.map((cat, i) => (
+            <React.Fragment key={cat}>
+              {!!i && ', '}
+              <Link to={`/categories/${kebabCase(cat)}`}>{cat}</Link>
+            </React.Fragment>
+          ))}
       </Subline>
       <Excerpt>{excerpt}</Excerpt>
     </Post>
-  )
-}
+  );
+};
 
-export default Article
+export default Article;
 
 Article.propTypes = {
   title: PropTypes.string.isRequired,
@@ -72,4 +73,4 @@ Article.propTypes = {
   slug: PropTypes.string.isRequired,
   timeToRead: PropTypes.number.isRequired,
   categories: PropTypes.array.isRequired,
-}
+};

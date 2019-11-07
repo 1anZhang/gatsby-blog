@@ -11,7 +11,6 @@ import blogIcon from '../images/icons/blog.svg';
 import giftIcon from '../images/icons/gift.svg';
 import aboutIcon from '../images/icons/about.svg';
 
-
 const HeaderContainer = styled.header`
   background-color: ${props => props.bgColor};
   margin-bottom: 24px;
@@ -77,7 +76,6 @@ const NaviGatorItemLogo = styled.img`
   line-height: 32px;
 `;
 
-
 const Header = ({ siteTitle, type }) => {
   const { site } = useStaticQuery(
     graphql`
@@ -101,10 +99,22 @@ const Header = ({ siteTitle, type }) => {
           {/* <Title>{siteTitle}</Title> */}
         </LinkHome>
         <NavigatorContainer>
-          <NaviGatorItem to="/"><NaviGatorItemLogo src={homeIcon} />首页</NaviGatorItem>
-          <NaviGatorItem to="/blog"><NaviGatorItemLogo src={blogIcon} />博客</NaviGatorItem>
-          <NaviGatorItem to="/treasure"><NaviGatorItemLogo src={giftIcon} />黑盒</NaviGatorItem>
-          <NaviGatorItem to="/about"><NaviGatorItemLogo src={aboutIcon} />关于</NaviGatorItem>
+          <NaviGatorItem to="/">
+            <NaviGatorItemLogo src={homeIcon} />
+            首页
+          </NaviGatorItem>
+          <NaviGatorItem to="/blog">
+            <NaviGatorItemLogo src={blogIcon} />
+            博客
+          </NaviGatorItem>
+          <NaviGatorItem to="/treasure">
+            <NaviGatorItemLogo src={giftIcon} />
+            黑盒
+          </NaviGatorItem>
+          <NaviGatorItem to="/about">
+            <NaviGatorItemLogo src={aboutIcon} />
+            关于
+          </NaviGatorItem>
         </NavigatorContainer>
       </Content>
     </HeaderContainer>
