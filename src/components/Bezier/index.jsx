@@ -12,8 +12,8 @@ const Bezier = ({
   width = 200,
   height = 200,
   handleColor = '#ff3614',
-  handlePointColor = '#12fc14',
-  curveColor = '#049',
+  handlePointColor = '#ff3614',
+  curveColor = '#321',
   onAnchorChange,
 }) => {
   const cWidth = width * 2;
@@ -41,16 +41,6 @@ const Bezier = ({
     }
     arr.push({ x: 1, y: 1 });
 
-    // draw border
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(0, cHeight);
-    ctx.lineTo(0, 0);
-    ctx.moveTo(0, cHeight);
-    ctx.lineTo(cWidth, cHeight);
-    ctx.stroke();
-
     // draw grid
     ctx.strokeStyle = '#ccc';
     ctx.lineWidth = 1;
@@ -64,6 +54,25 @@ const Bezier = ({
       ctx.moveTo(i, 0);
       ctx.lineTo(i, cWidth);
     }
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.lineWidth = 4;
+    ctx.moveTo(0, cHeight / 2);
+    ctx.lineTo(cWidth, cHeight / 2);
+    ctx.moveTo(cWidth / 2, 0);
+    ctx.lineTo(cWidth / 2, cHeight);
+    ctx.moveTo(0, cHeight);
+    ctx.lineTo(cWidth, 0);
+    ctx.stroke();
+
+    // draw border
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(0, cHeight);
+    ctx.lineTo(0, 0);
+    ctx.moveTo(0, cHeight);
+    ctx.lineTo(cWidth, cHeight);
     ctx.stroke();
 
     // draw Handle
@@ -88,7 +97,7 @@ const Bezier = ({
 
     // draw curve
     ctx.strokeStyle = curveColor;
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.moveTo(0, cHeight);
     arr.forEach(point =>
@@ -153,11 +162,11 @@ const Bezier = ({
       if (i) {
         hover = true;
         if (i === 1) {
-          handleWidth1 = 10;
-          handleRadius1 = 12;
+          handleWidth1 = 8;
+          handleRadius1 = 10;
         } else {
-          handleWidth2 = 10;
-          handleRadius2 = 12;
+          handleWidth2 = 8;
+          handleRadius2 = 10;
         }
         draw();
       } else {
