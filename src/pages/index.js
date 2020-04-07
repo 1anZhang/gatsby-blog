@@ -4,11 +4,6 @@ import styled from 'styled-components';
 import IndexLayout from '../components/IndexLayout';
 import SEO from '../components/Seo';
 
-// const ImageWrapper = styled.div`
-//   max-width: 300px;
-//   margin-bottom: 24px;
-// `;
-
 const Time = styled.div`
   margin-top: 120px;
   font-size: 120px;
@@ -28,7 +23,7 @@ const IndexPage = () => {
     }
   `);
 
-  const [ time, setTime ] = useState({h: '', m: '', s: ''});
+  const [ time, setTime ] = useState({h: '--', m: '--', s: '--'});
 
   useEffect(() => {
     setInterval(() => {
