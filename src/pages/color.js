@@ -7,7 +7,6 @@ import ColorSelect from '../components/ColorSelect';
 const TreasurePage = () => (
   <Layout>
     <SEO title="color" />
-
     <ColorSelect />
   </Layout>
 );

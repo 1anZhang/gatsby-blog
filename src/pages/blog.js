@@ -6,12 +6,8 @@ import Layout from '../components/Layout';
 import SEO from '../components/Seo';
 import Article from '../components/Article';
 
-const Content = styled(Article)`
-  grid-column: 2;
-  box-shadow: 0 4px 120px rgba(0, 0, 0, 0.1);
-  border-radius: 1rem;
-  padding: 3rem 6rem;
-  overflow: hidden;
+const PostWrapper = styled.div`
+  padding: 24px;
 `;
 
 const BlogPage = ({
@@ -21,9 +17,9 @@ const BlogPage = ({
 }) => (
   <Layout>
     <SEO title="blog" />
-    <div>
+    <PostWrapper>
       {posts.map(post => (
-        <Content
+        <Article
           title={post.frontmatter.title}
           date={post.frontmatter.date}
           excerpt={post.excerpt}
@@ -33,7 +29,7 @@ const BlogPage = ({
           key={post.fields.slug}
         />
       ))}
-    </div>
+    </PostWrapper>
   </Layout>
 );
 

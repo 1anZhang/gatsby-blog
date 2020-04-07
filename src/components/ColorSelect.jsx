@@ -1,29 +1,23 @@
-/**
- * Layout component that queries for data
- * with Gatsby's useStaticQuery component
- *
- * See: https://www.gatsbyjs.org/docs/use-static-query/
- */
-
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Color from '../utils/color';
+import { fancyColor } from 'fancy-color';
+import { SketchPicker } from 'react-color';
 import { copyToClipboard } from '../utils/lo';
 
 const Wrapper = styled.div`
   padding: 24px;
   max-width: 400px;
-  border: 1px solid #adf;
-  border-radius: 6px;
 `;
 
-const ColorInput = styled.input``;
 
 const ColorList = styled.div`
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  width: 210px;
+  width: 256px;
+  border: 1px solid #adf;
+  border-radius: 6px;
+  padding: 24px;
 `;
 
 const ColorItem = styled.div`
@@ -55,29 +49,69 @@ const ColorItem = styled.div`
   }
 `;
 
+const ColorPickWrapper = styled.div`
+  padding: 5px;
+  background: #fff;
+  border-radius: 1px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+`;
+
+const ColorContent = styled.div`
+  width: 36px;
+  height: 14px;
+  border-radius: 2px;
+  background: ${prop => prop.color};
+  cursor: pointer;
+`;
+const PickerWrapper = styled.div`
+  position: absolute;
+  z-index: 2;
+`;
+
+const CloseWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`
+
 const ColorSelect = () => {
   const [color, setColor] = useState('#e28f04');
-  const handleColorChange = e => {
-    setColor(e.target.value);
+  const [pickerVisible, setVisible] = useState(false);
+  const handleChangeComplete = color => {
+    setColor(color.hex);
   };
 
   const handleCopy = color => {
     copyToClipboard(color);
   };
-
-  const cc = new Color(color);
-  const cl = cc.getColorGradeList();
+  const cc = fancyColor(color);
+  const colorGradeList = cc.getColorGradeList();
 
   return (
     <Wrapper>
-      <ColorInput type="color" onChange={handleColorChange} value={color} />
+      <ColorPickWrapper>
+        <ColorContent onClick={() => setVisible(true)} color={color}></ColorContent>
+        {pickerVisible && (
+          <PickerWrapper>
+            <CloseWrapper onClick={() => setVisible(false)}></CloseWrapper>
+            <SketchPicker
+              type="color"
+              onChangeComplete={handleChangeComplete}
+              color={color}
+            />
+          </PickerWrapper>
+        )}
+      </ColorPickWrapper>
       <ColorList>
-        {cl.map((c, i) => (
+        {colorGradeList.map((c, i) => (
           <ColorItem
-            color={c}
+            color={c.toHexString()}
             index={i}
-            key={c}
-            onClick={() => handleCopy(c)}
+            key={i}
+            onClick={() => handleCopy(c.toHexString())}
           />
         ))}
       </ColorList>

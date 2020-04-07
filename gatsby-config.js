@@ -1,7 +1,7 @@
 module.exports = {
   siteMetadata: {
-    title: `张岩の个人网站`,
-    description: `the journey begin！`,
+    title: `呆呆鸭 の 后院`,
+    description: `呆呆鸭の后院，这里有各种新鲜的玩具，奇怪的东西，还有一些无趣的牢骚。`,
     author: `zhangyxy`,
     background_color: `#e28f04`,
     theme_color: `#e28f04`,
@@ -68,8 +68,8 @@ module.exports = {
         name: `gatsby-starter-default`,
         short_name: `starter`,
         start_url: `/`,
-        background_color: `#eabc26`,
-        theme_color: `#eabc26`,
+        background_color: `#e28f04`,
+        theme_color: `#e28f04`,
         display: `minimal-ui`,
         icon: `src/images/icons/duck.svg`, // This path is relative to the root of the site.
       },

@@ -180,6 +180,10 @@ const Bezier = ({
     }
   };
 
+  const formatValue = (v) => {
+    return v.toFixed(2);
+  }
+
   useEffect(() => {
     draw();
   }, []);
@@ -194,6 +198,13 @@ const Bezier = ({
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
       ></canvas>
+      <p>参数：</p>
+      <p>
+        x:{formatValue(x1)}, y:{formatValue(y1)}
+      </p>
+      <p>
+        x:{formatValue(x2)}, y:{formatValue(y2)}
+      </p>
     </BezierWrapper>
   );
 };

@@ -4,12 +4,13 @@ import { graphql, useStaticQuery } from 'gatsby';
 
 const FooterWrapper = styled.footer`
   width: 100%;
-  margin-top: 18px;
+  height: 300px;
   padding: 36px 15% 12px 15%;
   background-color: ${p => p.color};
   color: white;
   font-family: sans-serif;
   font-size: 18px;
+  box-sizing: border-box;
 `;
 
 const Footer = () => {

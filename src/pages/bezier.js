@@ -15,7 +15,7 @@ const TreasurePage = () => {
   return (
     <Layout>
       <Seo title="bezier-curve" />
-
+      <h1>贝塞尔曲线</h1>
       <Bezier value={o1} onAnchorChange={handleChange1} />
       <Bezier value={o2} onAnchorChange={handleChange2} />
     </Layout>

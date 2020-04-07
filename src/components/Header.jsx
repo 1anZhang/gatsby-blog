@@ -1,6 +1,6 @@
 import { Link, graphql, useStaticQuery } from 'gatsby';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import logoIcon from '../images/icons/duck.svg';
@@ -11,7 +11,15 @@ import aboutIcon from '../images/icons/about.svg';
 
 const HeaderContainer = styled.header`
   background-color: ${props => props.bgColor};
-  margin-bottom: 24px;
+  z-index: 10;
+  transition: transform 0.5s ease-in-out;
+`;
+
+const Title = styled.p`
+  font-size: 20px;
+  font-weight: bold;
+  margin-left: 8px;
+  margin-bottom: 0;
 `;
 
 const Content = styled.div`
@@ -27,6 +35,10 @@ const LinkHome = styled(Link)`
   color: #fff;
   text-decoration: none;
   flex: 0 0 320px;
+  &:hover {
+    text-decoration: none;
+    color: #fff;
+  }
 `;
 
 const Logo = styled.img`
@@ -81,13 +93,37 @@ const Header = ({ siteTitle, type }) => {
   );
   const isTransParent = type === 'transparent';
   const bgColor = isTransParent ? 'transparent' : site.siteMetadata.theme_color;
-
+  const [isScroll, setIsScroll] = useState(false);
+  useEffect(() => {
+    window.addEventListener('scroll', winScroll);
+    function winScroll() {
+      if (getheight() > 64) {
+        setIsScroll(true);
+      } else {
+        setIsScroll(false);
+      }
+    }
+    function getheight() {
+      const scrollheight =
+        document.body.scrollTop == 0
+          ? document.documentElement.scrollTop
+          : document.body.scrollTop;
+      return scrollheight;
+    }
+  }, []);
+  const style = {
+    position: 'fixed',
+    top: '-56px',
+    left: 0,
+    right: 0,
+    transform: `translate(0, 56px)` 
+  }
   return (
-    <HeaderContainer bgColor={bgColor}>
+    <HeaderContainer bgColor={bgColor} style={isScroll && style || {}}>
       <Content>
         <LinkHome to="/">
           <Logo src={logoIcon} />
-          {/* <Title>{siteTitle}</Title> */}
+          <Title>{siteTitle}</Title>
         </LinkHome>
         <NavigatorContainer>
           <NaviGatorItem to="/">

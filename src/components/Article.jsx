@@ -7,10 +7,14 @@ import kebabCase from 'lodash/kebabCase';
 import Subline from './Subline';
 
 const Post = styled.article`
+  max-width: 880px;
+  margin: 24px auto;
+  padding: 3.5rem 5.5rem;
   display: flex;
   flex-direction: column;
-  margin-top: 3.5rem;
-  margin-bottom: 3.5rem;
+  border-radius: 16px;
+  box-shadow: 0px 0px 17px 0px rgba(0, 0, 0, 0.25);
+  background-color: #fff;
 `;
 
 const Title = styled.h2`
@@ -31,7 +35,7 @@ const Initiale = styled.span`
   transform: translate(-50%, -50%);
   opacity: 0.08;
   user-select: none;
-  z-index: -1;
+  z-index: 1;
 `;
 
 const Excerpt = styled.p`
@@ -50,7 +54,9 @@ const Article = ({ title, date, excerpt, slug, timeToRead, categories }) => {
         <Link to={slug}>{title}</Link>
       </Title>
       <Subline>
-        {date} &mdash; {timeToRead} Min Read &mdash; In{' '}
+        {date} &mdash; {timeToRead} Min Read
+        <br />
+        Catagories: 
         {categories &&
           categories.map((cat, i) => (
             <React.Fragment key={cat}>

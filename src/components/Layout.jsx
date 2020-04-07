@@ -41,8 +41,8 @@ const Wrapper = styled.div`
 `;
 
 const MainContent = styled.main`
-  /* margin: 0 auto; */
-  /* max-width: 680px; */
+  padding: 24px;
+  min-height: calc(100vh - 356px);
 `;
 
 const Layout = ({ children }) => {

@@ -10,8 +10,8 @@ import CodeBlock from '../components/CodeBlock';
 import PrevNext from '../components/PrevNext';
 
 const MainContent = styled.div`
-  margin: 0 auto;
-  max-width: 680px;
+  margin: 20px auto;
+  max-width: 880px;
 `;
 
 const Pre = styled.div`
