@@ -1,4 +1,4 @@
-import React, { useState ,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { graphql, useStaticQuery } from 'gatsby';
 import styled from 'styled-components';
 import IndexLayout from '../components/IndexLayout';
@@ -23,7 +23,7 @@ const IndexPage = () => {
     }
   `);
 
-  const [ time, setTime ] = useState({h: '--', m: '--', s: '--'});
+  const [time, setTime] = useState({ h: '--', m: '--', s: '--' });
 
   useEffect(() => {
     setInterval(() => {
@@ -32,13 +32,13 @@ const IndexPage = () => {
         h: formatTime(d.getHours()),
         m: formatTime(d.getMinutes()),
         s: formatTime(d.getSeconds()),
-      })
-    }, 1000)
+      });
+    }, 1000);
   }, []);
 
-  const formatTime = (t) => {
-    return t > 10 ? t : `0${t}`
-  }
+  const formatTime = t => {
+    return t > 10 ? t : `0${t}`;
+  };
 
   return (
     <IndexLayout>

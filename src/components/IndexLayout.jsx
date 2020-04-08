@@ -22,6 +22,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 const Wrapper = styled.div`
   position: relative;
+  min-height: 100vh;
 `;
 
 const BgImgWrapper = styled.div`

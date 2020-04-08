@@ -180,9 +180,9 @@ const Bezier = ({
     }
   };
 
-  const formatValue = (v) => {
+  const formatValue = v => {
     return v.toFixed(2);
-  }
+  };
 
   useEffect(() => {
     draw();

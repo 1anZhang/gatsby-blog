@@ -9,7 +9,6 @@ const Wrapper = styled.div`
   max-width: 400px;
 `;
 
-
 const ColorList = styled.div`
   display: flex;
   justify-content: space-around;
@@ -75,7 +74,7 @@ const CloseWrapper = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-`
+`;
 
 const ColorSelect = () => {
   const [color, setColor] = useState('#e28f04');
@@ -93,7 +92,10 @@ const ColorSelect = () => {
   return (
     <Wrapper>
       <ColorPickWrapper>
-        <ColorContent onClick={() => setVisible(true)} color={color}></ColorContent>
+        <ColorContent
+          onClick={() => setVisible(true)}
+          color={color}
+        ></ColorContent>
         {pickerVisible && (
           <PickerWrapper>
             <CloseWrapper onClick={() => setVisible(false)}></CloseWrapper>

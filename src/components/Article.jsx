@@ -56,7 +56,7 @@ const Article = ({ title, date, excerpt, slug, timeToRead, categories }) => {
       <Subline>
         {date} &mdash; {timeToRead} Min Read
         <br />
-        Catagories: 
+        Catagories:
         {categories &&
           categories.map((cat, i) => (
             <React.Fragment key={cat}>

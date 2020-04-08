@@ -116,10 +116,10 @@ const Header = ({ siteTitle, type }) => {
     top: '-56px',
     left: 0,
     right: 0,
-    transform: `translate(0, 56px)` 
-  }
+    transform: `translate(0, 56px)`,
+  };
   return (
-    <HeaderContainer bgColor={bgColor} style={isScroll && style || {}}>
+    <HeaderContainer bgColor={bgColor} style={(isScroll && style) || {}}>
       <Content>
         <LinkHome to="/">
           <Logo src={logoIcon} />
