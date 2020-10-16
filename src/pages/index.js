@@ -37,7 +37,7 @@ const IndexPage = () => {
   }, []);
 
   const formatTime = t => {
-    return t > 10 ? t : `0${t}`;
+    return t > 9 ? t : `0${t}`;
   };
 
   return (

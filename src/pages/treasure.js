@@ -16,6 +16,7 @@ const TreasurePage = () => (
     <LinkNode to="/color">Color Select</LinkNode>
     <LinkNode to="/bezier">Bezier Curve</LinkNode>
     <LinkNode to="/transform">3d Transform</LinkNode>
+    <LinkNode to="/nippon">Nippon Color</LinkNode>
   </Layout>
 );
 
