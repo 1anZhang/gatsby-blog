@@ -10,7 +10,7 @@ import GlossImage from '../images/treasure/nippon/gloss.png';
 
 import { NIPPON_COLOR } from '../utils/nippon';
 
-const Background = styled.div.attrs(props => ({
+const Background = styled.div.attrs((props) => ({
   style: {
     backgroundColor: props.c || '#fad',
   },
@@ -34,11 +34,6 @@ const BackgroundGlose = styled.div`
   background: url(${GlossImage}) repeat-x;
 `;
 
-const Wrapper = styled.div`
-  overflow: hidden;
-  box-sizing: border-box;
-`;
-
 const InnerContainer = styled.div`
   position: relative;
   width: 960px;
@@ -51,6 +46,8 @@ const Left = styled.div`
   display: flex;
   flex-wrap: wrap;
   width: 506px;
+  height: 100%;
+  overflow-y: scroll;
 `;
 
 const ColorBar = styled.div`
@@ -67,98 +64,95 @@ const Label = styled.div`
   font-size: 12px;
   line-height: 1;
   color: #fff;
-  font-family: 'Roboto';
+  /* font-family: 'Toppan Bunkyu Mincho'; */
+`;
+
+const CmykWrapper = styled.div`
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  height: 90px;
+  circle {
+    transition: stroke-dasharray 0.6s ease-out;
+  }
 `;
 
 const CmykComponent = ({ label, value, color }) => {
   let perimeter = Math.PI * 2 * 23;
   perimeter = (perimeter * value) / 100;
-  const Wrapper = styled.div`
-    border-top: 1px solid rgba(255, 255, 255, 0.5);
-    height: 90px;
-    circle {
-      transition: stroke-dasharray 0.25s;
-    }
-  `;
 
   return (
-    <Wrapper>
+    <CmykWrapper>
       <Label>{label}</Label>
-      <svg width="50" height="50" viewBox="0 0 50 50">
+      <svg width='50' height='50' viewBox='0 0 50 50'>
+        <circle cx='25' cy='25' r='23' strokeWidth='2' stroke='#FFF' strokeOpacity='0.3' fill='none'></circle>
         <circle
-          cx="25"
-          cy="25"
-          r="23"
-          strokeWidth="2"
-          stroke="#FFF"
-          strokeOpacity="0.3"
-          fill="none"
-        ></circle>
-        <circle
-          cx="25"
-          cy="25"
-          r="23"
-          strokeWidth="2"
+          cx='25'
+          cy='25'
+          r='23'
+          strokeWidth='2'
           stroke={color}
-          fill="none"
-          transform-origin="center"
-          transform="rotate(270)"
-          strokeDasharray={`${perimeter} 1000`}
-        ></circle>
+          fill='none'
+          transform-origin='center'
+          transform='rotate(270)'
+          strokeDasharray={`${perimeter} 1000`}></circle>
         <text
-          x="25"
-          y="26"
-          fontSize="22"
+          x='25'
+          y='26'
+          fontSize='22'
           fill={color}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          fontFamily="Roboto"
-        >
+          textAnchor='middle'
+          dominantBaseline='middle'
+          fontFamily='Roboto'>
           {value}
         </text>
       </svg>
-    </Wrapper>
+    </CmykWrapper>
   );
 };
 
+const RgbWrapper = styled.div`
+  height: 60px;
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+`;
+const RgbValue = styled.div`
+  font-size: 20px;
+  color: #fff;
+  text-align: right;
+  /* font-family: 'Toppan Bunkyu Mincho'; */
+`;
+
 const RgbComponent = ({ label, value, color }) => {
-  const Wrapper = styled.div`
-    height: 60px;
-    border-top: 1px solid rgba(255, 255, 255, 0.5);
-  `;
-  const Value = styled.div`
-    font-size: 20px;
-    color: #fff;
-    text-align: right;
-    font-family: 'Roboto';
-  `;
   return (
-    <Wrapper>
+    <RgbWrapper>
       <Label>{label}</Label>
-      <Value>{value}</Value>
-    </Wrapper>
+      <RgbValue>{value}</RgbValue>
+    </RgbWrapper>
   );
 };
 
 const ColorName = styled.div`
   position: absolute;
-  left: 720px;
+  left: 630px;
   top: 40px;
-  /* width: 50px; */
 `;
 
 const Honji = styled.div`
-  margin-top: 32px;
-  margin-bottom: 24px;
+  margin: 32px auto 24px;
   font-size: 56px;
+  line-height: 1;
   color: #fff;
   writing-mode: vertical-rl;
+  font-family: 'Toppan Bunkyu Mincho';
+  letter-spacing: 16px;
 `;
 
 const Romaji = styled.div`
+  width: 240px;
   font-size: 18px;
+  line-height: 1;
   color: #fff;
   text-align: center;
+  letter-spacing: 1px;
+  font-family: 'Toppan Bunkyu Mincho';
 `;
 
 const NipponPage = () => {
@@ -176,14 +170,19 @@ const NipponPage = () => {
       <Background c={currentColor.hex}>
         <BackgroundGlose></BackgroundGlose>
         <InnerContainer>
+          <Left>
+            {NIPPON_COLOR.map((item) => (
+              <NipponItem key={item.index} item={item} onChangeItem={onChangeItem} />
+            ))}
+          </Left>
           <ColorBar>
-            <CmykComponent label="C" value={currentColor.c} color="#0093D3" />
-            <CmykComponent label="M" value={currentColor.m} color="#CC006B" />
-            <CmykComponent label="Y" value={currentColor.y} color="#FFF10C" />
-            <CmykComponent label="K" value={currentColor.k} color="#333" />
-            <RgbComponent label="R" value={currentColor.r} />
-            <RgbComponent label="G" value={currentColor.g} />
-            <RgbComponent label="B" value={currentColor.b} />
+            <CmykComponent label='C' value={currentColor.c} color='#0093D3' />
+            <CmykComponent label='M' value={currentColor.m} color='#CC006B' />
+            <CmykComponent label='Y' value={currentColor.y} color='#FFF10C' />
+            <CmykComponent label='K' value={currentColor.k} color='#333' />
+            <RgbComponent label='R' value={currentColor.r} />
+            <RgbComponent label='G' value={currentColor.g} />
+            <RgbComponent label='B' value={currentColor.b} />
           </ColorBar>
           <ColorName>
             <Honji>{currentColor.honji}</Honji>
@@ -191,19 +190,6 @@ const NipponPage = () => {
           </ColorName>
         </InnerContainer>
       </Background>
-      <Wrapper>
-        <InnerContainer>
-          <Left>
-            {NIPPON_COLOR.map(item => (
-              <NipponItem
-                key={item.index}
-                item={item}
-                onChangeItem={onChangeItem}
-              />
-            ))}
-          </Left>
-        </InnerContainer>
-      </Wrapper>
     </FullScreenLayout>
   );
 };

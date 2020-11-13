@@ -6,7 +6,7 @@
  */
 
 html {
-  font-family: sans-serif;
+  /* font-family: sans-serif; */
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
 }
@@ -207,7 +207,7 @@ html {
 }
 body {
   color: hsla(0, 0%, 0%, 0.8);
-  font-family: 'Yumincho', Monaco, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+  font-family: Monaco, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
     'Helvetica Neue', sans-serif;
   font-weight: normal;
   word-wrap: break-word;

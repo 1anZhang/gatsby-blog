@@ -32,12 +32,10 @@ const BgImgWrapper = styled.div`
   width: 100vw;
   height: 100vh;
   z-index: -1;
-`;
-
-const BgImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  background-image: url(${HomeBg});
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 `;
 
 const MainContent = styled.div``;
@@ -57,9 +55,7 @@ const IndexLayout = ({ children }) => {
   return (
     <Wrapper>
       <GlobalStyle themeColor={data.site.siteMetadata.theme_color} />
-      <BgImgWrapper>
-        <BgImage src={HomeBg}></BgImage>
-      </BgImgWrapper>
+      <BgImgWrapper />
       <Header siteTitle={data.site.siteMetadata.title} type="transparent" />
       <MainContent>{children}</MainContent>
     </Wrapper>

@@ -16,7 +16,7 @@ const Wrapper = styled.div`
   cursor: pointer;
 `;
 
-const Header = styled.div.attrs(props => ({
+const Header = styled.div.attrs((props) => ({
   style: {
     backgroundColor: props.c,
   },
@@ -43,7 +43,7 @@ const TopRight = styled.div`
   font-size: 14px;
 `;
 
-const Number = styled.div.attrs(props => ({
+const Number = styled.div.attrs((props) => ({
   style: {
     color: props.c,
   },
@@ -53,7 +53,7 @@ const Number = styled.div.attrs(props => ({
 
 const Name = styled.div`
   color: #fff;
-  font-family: '翩翩体-简';
+  font-family: 'Toppan Bunkyu Mincho';
 `;
 
 const Bottom = styled.div`
@@ -75,62 +75,55 @@ const Romaji = styled.div`
   font-size: 14px;
   color: #fff;
   writing-mode: vertical-rl;
+  font-family: 'Toppan Bunkyu Mincho';
 `;
 
 const Circle = ({ value }) => {
   let perimeter = Math.PI * 2 * 8;
-  perimeter = perimeter * value / 100;
+  perimeter = (perimeter * value) / 100;
   return (
-    <svg width="25" height="25" viewBox="0 0 25 25">
+    <svg width='25' height='25' viewBox='0 0 25 25'>
+      <circle cx='13' cy='13' r='8' strokeWidth='5' stroke='#FFF' strokeOpacity='0.3' fill='none'></circle>
       <circle
-        cx="13"
-        cy="13"
-        r="8"
-        strokeWidth="5"
-        stroke="#FFF"
-        strokeOpacity="0.3"
-        fill="none"
-      ></circle>
-      <circle
-        cx="13"
-        cy="13"
-        r="8"
-        strokeWidth="5"
-        stroke="#FFF"
-        fill="none"
-        transform-origin="center"
-        transform="rotate(270)"
-        strokeDasharray={`${perimeter} 1000`}
-      ></circle>
+        cx='13'
+        cy='13'
+        r='8'
+        strokeWidth='5'
+        stroke='#FFF'
+        fill='none'
+        transform-origin='center'
+        transform='rotate(270)'
+        strokeDasharray={`${perimeter} 1000`}></circle>
     </svg>
   );
 };
+
+const LineWrapper = styled.div`
+  display: flex;
+`;
+
+const SingleLineWrapper = styled.div`
+  height: 100%;
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.3);
+  & + & {
+    margin-left: 2px;
+  }
+`;
+
+const SingleLine = styled.div.attrs((props) => ({
+  style: {
+    height: `${props.percent}%`,
+  },
+}))`
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.7);
+`;
 
 const Line = ({ r, g, b }) => {
   const percentR = (r / 255) * 100;
   const percentG = (g / 255) * 100;
   const percentB = (b / 255) * 100;
-  const LineWrapper = styled.div`
-    display: flex;
-  `;
-
-  const SingleLineWrapper = styled.div`
-    height: 100%;
-    width: 1px;
-    background-color: rgba(255, 255, 255, 0.3);
-    & + & {
-      margin-left: 2px;
-    }
-  `;
-
-  const SingleLine = styled.div.attrs(props => ({
-    style: {
-      height: `${props.percent}%`,
-    },
-  }))`
-    width: 1px;
-    background-color: rgba(255, 255, 255, 0.7);
-  `;
 
   return (
     <LineWrapper>
